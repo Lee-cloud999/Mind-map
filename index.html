@@ -26,11 +26,11 @@ path{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round}
 .node .label{word-break:break-word}
 .tip{position:absolute;top:12px;left:12px;background:rgba(255,255,255,.9);border:1px solid #e3dfd5;border-radius:11px;padding:8px 10px;color:#777;font-size:11px;pointer-events:none}
 .toolbar{position:absolute;left:50%;bottom:max(14px,env(safe-area-inset-bottom));transform:translateX(-50%);display:flex;gap:3px;padding:6px;background:rgba(255,255,255,.96);border:1px solid #dedad0;border-radius:15px;box-shadow:0 7px 22px rgba(50,50,45,.12);z-index:4}
-.toolbar button{border:0;background:transparent;border-radius:10px;padding:9px 10px;color:#555d55;white-space:nowrap}.toolbar button:active{background:#eee}
+.toolbar.context-hidden{display:none}.toolbar button{border:0;background:transparent;border-radius:10px;padding:9px 10px;color:#555d55;white-space:nowrap}.toolbar button:active{background:#eee}
 .fab{position:absolute;right:15px;bottom:76px;width:54px;height:54px;border:0;border-radius:50%;background:var(--green);color:#fff;font-size:28px;box-shadow:0 7px 20px rgba(50,70,55,.25);z-index:4}
-.sheet{position:absolute;z-index:20;left:50%;bottom:0;width:min(560px,100%);max-height:72vh;overflow:auto;transform:translate(-50%,105%);transition:.2s;background:#fff;border-radius:22px 22px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));box-shadow:0 -12px 36px rgba(0,0,0,.14)}
+.sheet{position:absolute;z-index:20;left:50%;bottom:0;width:min(560px,100%);height:auto;max-height:min(68vh,560px);overflow-y:auto;-webkit-overflow-scrolling:touch;transform:translate(-50%,105%);transition:.2s;background:#fff;border-radius:22px 22px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));box-shadow:0 -12px 36px rgba(0,0,0,.14)}
 .sheet.open{transform:translate(-50%,0)}
-.sheet h3{margin:0 0 13px;font-size:17px}.row{display:flex;gap:8px}.textin,.search{width:100%;border:1px solid #ddd8ce;border-radius:12px;padding:12px;outline:none}.textin:focus,.search:focus{border-color:#8fa28e}
+.sheet h3{margin:0 38px 13px 0;font-size:17px}.sheet-close{position:sticky;float:right;top:0;z-index:3;width:34px;height:34px;margin:-5px -3px 0 8px;border:0;border-radius:50%;background:#f0eee9;font-size:20px;color:#555}.row{display:flex;gap:8px}.textin,.search{width:100%;border:1px solid #ddd8ce;border-radius:12px;padding:12px;outline:none}.textin:focus,.search:focus{border-color:#8fa28e}
 .actions{display:flex;justify-content:flex-end;gap:8px;margin-top:13px}.actions button,.widebtn{border:0;border-radius:11px;padding:10px 14px}.cancel{background:#eee}.primary{background:var(--green);color:#fff}
 .emoji-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:10px}.emoji-grid button{border:0;background:#f5f4f0;border-radius:10px;font-size:23px;padding:8px 2px}
 .tabs{display:flex;gap:7px;margin-bottom:12px}.tabs button{flex:1;border:1px solid #ddd8ce;background:#faf9f6;border-radius:11px;padding:9px}.tabs button.active{background:#eaf0e8;border-color:#bdcbb9}
@@ -54,8 +54,8 @@ path{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round}
 </header>
 <div class="workspace" id="ws">
  <div class="stage" id="stage"><svg id="lines"></svg></div>
- <div class="tip">노드 선택 → 가지 추가 · 빈 곳 드래그 → 화면 이동</div>
- <div class="toolbar">
+ <div class="tip">+ → 새 가지 · 노드 선택 → 수정/이모지/이미지 · 빈 곳 드래그 → 화면 이동</div>
+ <div class="toolbar context-hidden" id="toolbar">
   <button id="addChild">＋ 가지</button><button id="addSibling">＋ 형제</button>
   <button id="editNode">✎ 수정</button><button id="emojiBtn">☺ 이모지</button><button id="imageBtn">▧ 이미지</button>
  </div>
@@ -70,12 +70,14 @@ path{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round}
 </div>
 
 <div class="sheet" id="textSheet">
+ <button class="sheet-close" data-close aria-label="닫기">×</button>
  <h3 id="textTitle">가지 추가</h3>
  <input class="textin" id="textInput" placeholder="생각을 짧게 입력하세요">
  <div class="actions"><button class="cancel" data-close>취소</button><button class="primary" id="textSave">저장</button></div>
 </div>
 
 <div class="sheet" id="emojiSheet">
+ <button class="sheet-close" data-close aria-label="닫기">×</button>
  <h3>이모지 선택</h3>
  <input class="search" id="emojiSearch" placeholder="검색: 책, 생각, 질문, 글쓰기…">
  <div class="emoji-grid" id="emojiGrid"></div>
@@ -83,6 +85,7 @@ path{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round}
 </div>
 
 <div class="sheet" id="imageSheet">
+ <button class="sheet-close" data-close aria-label="닫기">×</button>
  <h3>이미지</h3>
  <div class="tabs"><button class="active">내 이미지</button><button id="onlineTab">이미지 검색</button></div>
  <input type="file" id="fileInput" accept="image/*" class="hidden">
@@ -123,7 +126,10 @@ function render(){
   el.addEventListener('dblclick',e=>{e.stopPropagation();selectedId=n.id;openText('edit')});
   stage.appendChild(el)
  });
- drawLines(); $('toggleCredits').textContent=showCredits?'이미지 출처 숨기기':'이미지 출처 보이기';
+ drawLines();
+ const sn=node(selectedId);
+ $('toolbar').classList.toggle('context-hidden', !sn || sn.root);
+ $('toggleCredits').textContent=showCredits?'이미지 출처 숨기기':'이미지 출처 보이기';
 }
 function drawLines(){
  let s='';data.nodes.filter(n=>n.parent).forEach(n=>{let p=node(n.parent);if(!p)return;
@@ -174,7 +180,12 @@ function openSheet(id){document.querySelectorAll('.sheet').forEach(x=>x.classLis
 function closeSheets(){document.querySelectorAll('.sheet').forEach(x=>x.classList.remove('open'))}
 document.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeSheets);
 function openText(mode){textMode=mode;let n=node(selectedId);$('textTitle').textContent=mode==='edit'?'노드 수정':mode==='sibling'?'형제 가지 추가':'하위 가지 추가';$('textInput').value=mode==='edit'&&n?n.text:'';openSheet('textSheet');setTimeout(()=>$('textInput').focus(),180)}
-$('addChild').onclick=$('fab').onclick=()=>openText('child');$('addSibling').onclick=()=>openText('sibling');$('editNode').onclick=()=>openText('edit');
+$('addChild').onclick=()=>openText('child');
+$('fab').onclick=()=>{
+ if(!node(selectedId)) selectedId='root';
+ openText('child');
+};
+$('addSibling').onclick=()=>openText('sibling');$('editNode').onclick=()=>openText('edit');
 $('textSave').onclick=()=>{
  let t=$('textInput').value.trim();if(!t)return;let cur=node(selectedId);if(textMode==='edit'){cur.text=t}
  else{let parent=textMode==='sibling'?(cur.parent||cur.id):cur.id;let p=node(parent),kids=children(parent);let id='n'+Date.now();
