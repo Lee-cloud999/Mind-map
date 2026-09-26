@@ -40,6 +40,10 @@ path{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round}
 .hidden{display:none!important}
 @media(max-width:600px){.brand{font-size:18px}.head .hide-sm{display:none}.toolbar{width:calc(100% - 24px);justify-content:space-around}.toolbar button{font-size:12px;padding:9px 6px}.emoji-grid{grid-template-columns:repeat(6,1fr)}}
 .toolbar,.toolbar button,.fab,header,header button,.sheet,.sheet button,.sheet input,.menu,.menu button{touch-action:manipulation}
+
+.color-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:8px 0 4px}
+.color-swatch{height:52px;border:2px solid rgba(70,75,68,.12);border-radius:14px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.45)}
+.color-swatch.selected{outline:3px solid rgba(88,113,95,.28);border-color:#58715f}
 </style>
 </head>
 <body>
@@ -54,15 +58,15 @@ path{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round}
 </header>
 <div class="workspace" id="ws">
  <div class="stage" id="stage"><svg id="lines"></svg></div>
- <div class="tip">+ → 새 가지 · 노드 선택 → 수정/이모지/이미지 · 빈 곳 드래그 → 화면 이동</div>
+ <div class="tip">+ → 새 가지 · 가지 선택 → 수정/이모지/색상 · 빈 화면을 끌어 마인드맵 이동 · 가지를 끌어 위치 변경</div>
  <div class="toolbar context-hidden" id="toolbar">
   <button id="addChild">＋ 가지</button><button id="addSibling">＋ 형제</button>
-  <button id="editNode">✎ 수정</button><button id="emojiBtn">☺ 이모지</button><button id="imageBtn">▧ 이미지</button>
+  <button id="editNode">✎ 수정</button><button id="emojiBtn">☺ 이모지</button><button id="colorBtn">🎨 색상</button>
  </div>
  <button class="fab" id="fab">＋</button>
 </div>
 <div class="menu" id="menu">
- <button id="toggleCredits">이미지 출처 숨기기</button>
+ <button id="autoLayoutBtn">자동 정렬</button>
  <button id="fitBtn">전체 보기</button>
  <button id="deleteBtn">선택 노드 삭제</button>
  <button id="exportBtn">백업 저장</button>
@@ -84,20 +88,11 @@ path{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round}
  <div class="actions"><button class="cancel" id="removeEmoji">이모지 제거</button><button class="cancel" data-close>닫기</button></div>
 </div>
 
-<div class="sheet" id="imageSheet">
+<div class="sheet" id="colorSheet">
  <button class="sheet-close" data-close aria-label="닫기">×</button>
- <h3>이미지</h3>
- <div class="tabs"><button class="active">내 이미지</button><button id="onlineTab">이미지 검색</button></div>
- <input type="file" id="fileInput" accept="image/*" class="hidden">
- <button class="widebtn primary" id="chooseImage">사진 보관함에서 선택</button>
- <div class="preview" id="imgPreview">오프라인 버전에서는 내 사진을 바로 넣을 수 있어요.<br>상업용 이미지 검색은 온라인 버전에서 Pixabay 연동 예정.</div>
- <input class="textin" id="creditInput" placeholder="출처 메모 (선택)" style="margin-top:10px">
- <div class="switchrow"><span>이 이미지의 출처 표시</span><button class="switch on" id="creditSwitch"></button></div>
- <div class="actions"><button class="cancel" id="removeImage">이미지 제거</button><button class="cancel" data-close>취소</button><button class="primary" id="imageSave">적용</button></div>
-</div>
-<div id="imageViewer" class="hidden" style="position:absolute;inset:0;z-index:60;background:rgba(30,32,29,.86);display:flex;align-items:center;justify-content:center;padding:30px;touch-action:manipulation">
- <button id="viewerClose" aria-label="닫기" style="position:absolute;right:18px;top:18px;width:44px;height:44px;border:0;border-radius:50%;font-size:26px;background:#fff">×</button>
- <img id="viewerImg" alt="이미지 크게 보기" style="max-width:94%;max-height:90%;object-fit:contain;border-radius:14px">
+ <h3>가지 색상</h3>
+ <div class="color-grid" id="colorGrid"></div>
+ <div class="actions"><button class="cancel" id="defaultColor">기본색</button><button class="cancel" data-close>닫기</button></div>
 </div>
 <input type="file" id="backupInput" accept=".json,application/json" class="hidden">
 <script>
@@ -123,22 +118,17 @@ function render(){
  data.nodes.forEach(n=>{
   const el=document.createElement('div');el.className='node'+(n.root?' root':'')+(n.id===selectedId?' selected':'');
   el.dataset.id=n.id;el.style.left=n.x+'px';el.style.top=n.y+'px';if(!n.root)el.style.background=n.color||'#fff';
-  el.innerHTML=(n.image?`<img class="node-photo" data-view="${n.id}" src="${n.image}">`:'')+(n.emoji?`<div class="emoji">${esc(n.emoji)}</div>`:'')+
+  el.innerHTML=(n.emoji?`<div class="emoji">${esc(n.emoji)}</div>`:'')+
    `<div class="label">${esc(n.text)}</div>`+
    (n.image&&n.credit&&showCredits&&n.showCredit!==false?`<div class="credit">${esc(n.credit)}</div>`:'');
-  el.addEventListener('click',e=>{
-   if(e.target.classList.contains('node-photo')){
-     e.stopPropagation(); $('viewerImg').src=n.image; $('imageViewer').classList.remove('hidden'); return;
-   }
-   e.stopPropagation();selectedId=n.id;render()
-  });bindTouchNode(el);
+  el.addEventListener('click',e=>{e.stopPropagation();selectedId=n.id;render()});bindTouchNode(el);
   el.addEventListener('dblclick',e=>{e.stopPropagation();selectedId=n.id;openText('edit')});
   stage.appendChild(el)
  });
  drawLines();
  const sn=node(selectedId);
  $('toolbar').classList.toggle('context-hidden', !sn || sn.root);
- $('toggleCredits').textContent=showCredits?'이미지 출처 숨기기':'이미지 출처 보이기';
+
 }
 function drawLines(){
  let s='';data.nodes.filter(n=>n.parent).forEach(n=>{let p=node(n.parent);if(!p)return;
@@ -243,18 +233,41 @@ function renderEmoji(q=''){let z=q.trim().toLowerCase();$('emojiGrid').innerHTML
 $('emojiBtn').onclick=()=>{renderEmoji();$('emojiSearch').value='';openSheet('emojiSheet')};$('emojiSearch').oninput=e=>renderEmoji(e.target.value);
 $('removeEmoji').onclick=()=>{node(selectedId).emoji='';save();render();closeSheets()};
 
-$('imageBtn').onclick=()=>{let n=node(selectedId);pendingImage=n.image;$('creditInput').value=n.credit||'';$('creditSwitch').classList.toggle('on',n.showCredit!==false);$('imgPreview').innerHTML=n.image?`<img src="${n.image}">`:'오프라인 버전에서는 내 사진을 바로 넣을 수 있어요.<br>상업용 이미지 검색은 온라인 버전에서 Pixabay 연동 예정.';openSheet('imageSheet')};
-$('chooseImage').onclick=()=>$('fileInput').click();
-$('fileInput').onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{pendingImage=r.result;$('imgPreview').innerHTML=`<img src="${pendingImage}">`};r.readAsDataURL(f)};
-$('creditSwitch').onclick=()=> $('creditSwitch').classList.toggle('on');
-$('imageSave').onclick=()=>{let n=node(selectedId);n.image=pendingImage;n.credit=$('creditInput').value.trim();n.showCredit=$('creditSwitch').classList.contains('on');save();render();closeSheets()};
-$('removeImage').onclick=()=>{let n=node(selectedId);n.image=null;n.credit='';save();render();closeSheets()};
-$('onlineTab').onclick=()=>alert('이 파일은 완전 오프라인 버전이라 웹 이미지 검색은 작동하지 않아요. 온라인/PWA 버전에서 Pixabay 검색을 연결할 수 있어요.');
 
-$('viewerClose').onclick=()=>{$('imageViewer').classList.add('hidden');$('viewerImg').src=''};
-$('imageViewer').onclick=e=>{if(e.target===$('imageViewer')){$('imageViewer').classList.add('hidden');$('viewerImg').src=''}};
+const branchColors=[
+ ['세이지','#dfe8dc'],['하늘','#dfe7ee'],['라벤더','#e9e5ef'],['분홍','#eee0df'],
+ ['살구','#f2dfcf'],['노랑','#eee7cf'],['회색','#e8e8e4'],['흰색','#fffefa']
+];
+function renderColors(){
+ const n=node(selectedId);if(!n)return;
+ $('colorGrid').innerHTML=branchColors.map(([name,c])=>`<button class="color-swatch${n.color===c?' selected':''}" data-color="${c}" aria-label="${name}" title="${name}" style="background:${c}"></button>`).join('');
+ $('colorGrid').querySelectorAll('button').forEach(b=>b.onclick=()=>{
+   const x=node(selectedId);if(!x||x.root)return;
+   x.color=b.dataset.color;save();render();closeSheets();
+ });
+}
+$('colorBtn').onclick=()=>{const n=node(selectedId);if(!n||n.root)return;renderColors();openSheet('colorSheet')};
+$('defaultColor').onclick=()=>{const n=node(selectedId);if(!n||n.root)return;const sib=children(n.parent);const i=Math.max(0,sib.findIndex(x=>x.id===n.id));n.color=COLORS[i%COLORS.length];save();render();closeSheets()};
+
+function autoLayout(){
+ const root=node('root')||data.nodes.find(x=>!x.parent);if(!root)return;
+ const first=children(root.id),right=first.filter((_,i)=>i%2===0),left=first.filter((_,i)=>i%2===1);
+ function place(list,side){
+   let y=root.y-(list.length-1)*120;
+   list.forEach(top=>{
+     top.x=root.x+side*320;top.y=y;y+=240;
+     function walk(p,depth){
+       const ks=children(p.id);
+       ks.forEach((k,j)=>{k.x=p.x+side*280;k.y=p.y+(j-(ks.length-1)/2)*120;walk(k,depth+1)});
+     }
+     walk(top,1);
+   });
+ }
+ place(right,1);place(left,-1);save();render();center();
+}
+$('autoLayoutBtn').onclick=()=>{autoLayout();$('menu').classList.remove('open')};
+
 $('moreBtn').onclick=e=>{e.stopPropagation();$('menu').classList.toggle('open')};document.addEventListener('click',e=>{if(!$('menu').contains(e.target)&&e.target!==$('moreBtn'))$('menu').classList.remove('open')});
-$('toggleCredits').onclick=()=>{showCredits=!showCredits;save();render();$('menu').classList.remove('open')};
 $('centerBtn').onclick=$('fitBtn').onclick=()=>{center();$('menu').classList.remove('open')};
 $('deleteBtn').onclick=()=>{let n=node(selectedId);if(!n||n.root){alert('중심 노드는 삭제할 수 없어요.');return}if(!confirm('선택한 노드와 하위 가지를 삭제할까요?'))return;let ids=new Set([n.id]),changed=true;while(changed){changed=false;data.nodes.forEach(x=>{if(x.parent&&ids.has(x.parent)&&!ids.has(x.id)){ids.add(x.id);changed=true}})}data.nodes=data.nodes.filter(x=>!ids.has(x.id));selectedId='root';save();render();$('menu').classList.remove('open')};
 $('newMap').onclick=()=>{if(confirm('새 마인드맵을 시작할까요? 현재 맵은 지워집니다.')){data=fresh();showCredits=true;selectedId='root';save();render();center()}};
@@ -264,9 +277,3 @@ $('backupInput').onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new Fil
 closeSheets();render();
 </script>
 </body></html>
-<style>
-#imageSheet{max-height:68vh;padding-top:20px;padding-bottom:16px}
-#imageSheet .actions{position:sticky;bottom:-16px;background:#fff;padding:10px 0 4px;margin-top:8px;border-top:1px solid #eeeae2}
-.sheet-close{touch-action:manipulation!important;pointer-events:auto!important}
-.workspace{touch-action:none!important}
-</style>
