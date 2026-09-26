@@ -30,7 +30,7 @@ path{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round}
 .fab{position:absolute;right:15px;bottom:76px;width:54px;height:54px;border:0;border-radius:50%;background:var(--green);color:#fff;font-size:28px;box-shadow:0 7px 20px rgba(50,70,55,.25);z-index:4}
 .sheet{display:none;position:absolute;z-index:30;left:50%;top:50%;width:min(560px,calc(100% - 28px));max-height:min(72vh,620px);overflow-y:auto;-webkit-overflow-scrolling:touch;transform:translate(-50%,-50%);background:#fff;border:1px solid #e1ddd4;border-radius:20px;padding:18px 16px;box-shadow:0 18px 48px rgba(0,0,0,.22);touch-action:pan-y}
 .sheet.open{display:block}
-.sheet h3{margin:0 38px 13px 0;font-size:17px}.sheet-close{position:sticky;float:right;top:0;z-index:5;width:34px;height:34px;margin:-5px -3px 0 8px;border:0;border-radius:50%;background:#f0eee9;font-size:20px;color:#555}.row{display:flex;gap:8px}.textin,.search{width:100%;border:1px solid #ddd8ce;border-radius:12px;padding:12px;outline:none}.textin:focus,.search:focus{border-color:#8fa28e}
+.sheet h3{margin:0 44px 13px 0;font-size:17px}.sheet-close{position:absolute;right:12px;top:12px;z-index:100;width:40px;height:40px;margin:0;border:0;border-radius:50%;background:#f0eee9;font-size:20px;color:#555}.row{display:flex;gap:8px}.textin,.search{width:100%;border:1px solid #ddd8ce;border-radius:12px;padding:12px;outline:none}.textin:focus,.search:focus{border-color:#8fa28e}
 .actions{display:flex;justify-content:flex-end;gap:8px;margin-top:13px}.actions button,.widebtn{border:0;border-radius:11px;padding:10px 14px}.cancel{background:#eee}.primary{background:var(--green);color:#fff}
 .emoji-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:10px}.emoji-grid button{border:0;background:#f5f4f0;border-radius:10px;font-size:23px;padding:8px 2px}
 .tabs{display:flex;gap:7px;margin-bottom:12px}.tabs button{flex:1;border:1px solid #ddd8ce;background:#faf9f6;border-radius:11px;padding:9px}.tabs button.active{background:#eaf0e8;border-color:#bdcbb9}
@@ -177,10 +177,15 @@ ws.addEventListener('mousedown',e=>{if(blankCanvasTarget(e.target)){closeSheets(
 document.addEventListener('mousemove',e=>{if(drag){tx=e.clientX-px;ty=e.clientY-py;apply()}});
 document.addEventListener('mouseup',()=>drag=false);
 let touchPan=false,tpx=0,tpy=0;
-function blankCanvasTarget(t){return t===ws||t===stage||t===$('lines')||t.tagName==='svg'||t.tagName==='path'}
+function blankCanvasTarget(t){
+ return !t.closest('.node,.toolbar,.fab,.tip,.sheet,.menu,button,input');
+}
 ws.addEventListener('touchstart',e=>{
  if(blankCanvasTarget(e.target) && e.touches.length===1){
-   closeSheets();touchPan=true;tpx=e.touches[0].clientX-tx;tpy=e.touches[0].clientY-ty
+   closeSheets();
+   touchPan=true;
+   tpx=e.touches[0].clientX-tx;
+   tpy=e.touches[0].clientY-ty;
  }
 },{passive:true});
 ws.addEventListener('touchmove',e=>{
@@ -189,16 +194,36 @@ ws.addEventListener('touchmove',e=>{
 ws.addEventListener('touchend',()=>touchPan=false,{passive:true});
 ws.addEventListener('wheel',e=>{e.preventDefault();scale=Math.max(.3,Math.min(1.8,scale*(e.deltaY>0?.9:1.1)));apply()},{passive:false});
 
-function openSheet(id){document.querySelectorAll('.sheet').forEach(x=>x.classList.remove('open'));const sh=$(id);sh.scrollTop=0;sh.classList.add('open')}
-function closeSheets(){document.querySelectorAll('.sheet').forEach(x=>x.classList.remove('open'))}
-document.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeSheets);
+function closeSheets(){
+ document.querySelectorAll('.sheet').forEach(x=>{
+   x.classList.remove('open');
+   x.style.display='none';
+ });
+}
+function openSheet(id){
+ closeSheets();
+ const sh=$(id);
+ sh.scrollTop=0;
+ sh.style.display='block';
+ sh.classList.add('open');
+}
+function closeFromTouch(e){
+ if(e){e.preventDefault();e.stopPropagation();}
+ closeSheets();
+}
+document.querySelectorAll('[data-close]').forEach(b=>{
+ b.addEventListener('click',closeFromTouch);
+ b.addEventListener('touchend',closeFromTouch,{passive:false});
+});
 function openText(mode){textMode=mode;let n=node(selectedId);$('textTitle').textContent=mode==='edit'?'노드 수정':mode==='sibling'?'형제 가지 추가':'하위 가지 추가';$('textInput').value=mode==='edit'&&n?n.text:'';openSheet('textSheet');setTimeout(()=>$('textInput').focus(),180)}
-$('addChild').onclick=()=>{closeSheets();openText('child')};
-$('fab').onclick=()=>{
+function openChildOnly(){
  closeSheets();
  if(!node(selectedId)) selectedId='root';
  openText('child');
-};
+}
+$('addChild').onclick=openChildOnly;
+$('fab').onclick=openChildOnly;
+$('fab').addEventListener('touchend',e=>{e.preventDefault();e.stopPropagation();openChildOnly()},{passive:false});
 $('addSibling').onclick=()=>openText('sibling');$('editNode').onclick=()=>openText('edit');
 $('textSave').onclick=()=>{
  let t=$('textInput').value.trim();if(!t)return;let cur=node(selectedId);if(textMode==='edit'){cur.text=t}
@@ -236,6 +261,12 @@ $('newMap').onclick=()=>{if(confirm('새 마인드맵을 시작할까요? 현재
 $('exportBtn').onclick=()=>{let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='생각가지-백업.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500);$('menu').classList.remove('open')};
 $('importBtn').onclick=()=>$('backupInput').click();
 $('backupInput').onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{data=JSON.parse(r.result);showCredits=data.showCredits!==false;selectedId=data.nodes[0]?.id||'root';save();render();center()}catch(err){alert('백업 파일을 읽을 수 없어요.')}};r.readAsText(f)};
-render();
+closeSheets();render();
 </script>
 </body></html>
+<style>
+#imageSheet{max-height:68vh;padding-top:20px;padding-bottom:16px}
+#imageSheet .actions{position:sticky;bottom:-16px;background:#fff;padding:10px 0 4px;margin-top:8px;border-top:1px solid #eeeae2}
+.sheet-close{touch-action:manipulation!important;pointer-events:auto!important}
+.workspace{touch-action:none!important}
+</style>
