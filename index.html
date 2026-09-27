@@ -60,11 +60,17 @@ path{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round}
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <link rel="manifest" href="./manifest.webmanifest?v=3.0"><meta name="theme-color" content="#58715f">
+
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="생각가지">
+
 </head>
 <body>
 <div class="app">
 <header>
- <div class="brand">생각가지 <span class="version">v3.1</span></div>
+ <div class="brand">생각가지 <span class="version">v3.2</span></div>
  <div class="head">
   <button id="authBtn">로그인</button>
   <button id="syncBtn">동기화</button>
@@ -397,7 +403,7 @@ window.__sgjGetSnapshot=()=>JSON.stringify(data);
 window.__sgjApplyRemote=(snap)=>{try{window.__sgjRemoteApplying=true;let o=typeof snap==='string'?JSON.parse(snap):snap;if(!validMap(o))throw Error('invalid map');data=o;showCredits=data.showCredits!==false;positionLocked=!!data.positionLocked;selectedId=node('root')?'root':data.nodes[0]?.id||'root';lastSnapshot=JSON.stringify(data);undoStack=[lastSnapshot];redoStack=[];localStorage.setItem(KEY,lastSnapshot);render();return true}catch(e){console.error(e);return false}finally{window.__sgjRemoteApplying=false}};
 render();
 
-// v3.1: register the versioned service worker so GitHub Pages refreshes cached app files.
+// v3.2: register the versioned service worker so GitHub Pages refreshes cached app files.
 if('serviceWorker' in navigator){
  window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=3.1').then(r=>r.update()).catch(()=>{}));
 }
