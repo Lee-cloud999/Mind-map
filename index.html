@@ -49,6 +49,7 @@ path{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round}
 
 #textSheet{position:absolute;left:50%;top:88px;bottom:auto;width:min(390px,calc(100% - 28px));transform:translateX(-50%);border-radius:16px;padding:10px 12px;box-shadow:0 10px 30px rgba(0,0,0,.16);overflow:visible}#textSheet h3,#textSheet .sheet-close{display:none}.font-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.font-grid button,.size-row button{border:1px solid #ddd8ce;background:#faf9f6;border-radius:11px;padding:10px 6px;min-height:44px;font-size:13px}.font-grid button.active,.size-row button.active{background:#eaf0e8;border-color:#8fa28e}.size-row{display:flex;gap:7px;flex-wrap:wrap}.size-row button{flex:1}.node .label{line-height:1.35}
 .zoom-controls{position:absolute;right:14px;top:14px;z-index:7;display:flex;align-items:center;background:rgba(255,255,255,.96);border:1px solid #dedad0;border-radius:13px;box-shadow:0 5px 16px rgba(50,50,45,.1);overflow:hidden}.zoom-controls button{border:0;background:transparent;min-width:42px;height:40px;padding:0 8px;color:#555;font-weight:700}.zoom-controls #zoomLabel{min-width:58px;font-size:12px;font-weight:600;border-left:1px solid #eee9df;border-right:1px solid #eee9df}.zoom-controls button:active{background:#eee}
+.zoom-stack{position:absolute;right:14px;top:14px;z-index:9;display:flex;flex-direction:column;align-items:flex-end;gap:7px}.zoom-stack .zoom-controls{position:static}.history-controls{display:flex;gap:6px}.history-controls button{width:42px;height:38px;border:1px solid #dedad0;border-radius:11px;background:rgba(255,255,255,.96);box-shadow:0 4px 12px rgba(50,50,45,.08);font-size:20px;color:#555d55;font-weight:700}.history-controls button:disabled{opacity:.35}.history-controls button:active:not(:disabled){background:#eee}.toolbar button[aria-label]{min-width:40px;font-size:16px}.toolbar #fontBtn{font-size:14px;font-weight:700}
 
 .collapsed-badge{position:absolute;right:-8px;top:-8px;background:#58715f;color:#fff;border-radius:999px;font-size:10px;padding:3px 6px;border:2px solid #fff}.root-lines{display:grid;gap:8px;margin-top:8px}.root-line-row{display:grid;grid-template-columns:minmax(90px,1fr) auto;gap:10px;align-items:center;padding:9px 10px;border:1px solid #e7e2d8;border-radius:11px}.root-line-dots{display:grid;grid-template-columns:repeat(12,22px);gap:4px}.line-dot{width:22px;height:22px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #d8d3ca;padding:0}.line-dot.active{box-shadow:0 0 0 2px #4f5f52}.toolbar .mini-action{font-weight:700}.lock-on{background:#e8eee6!important;color:#405645!important}@media(max-width:760px){.root-line-row{grid-template-columns:1fr}.root-line-dots{grid-template-columns:repeat(6,24px);gap:5px}.line-dot{width:24px;height:24px}}
 </style>
@@ -58,7 +59,7 @@ path{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round}
 <body>
 <div class="app">
 <header>
- <div class="brand">생각가지 <span class="version">v2.8</span></div>
+ <div class="brand">생각가지 <span class="version">v2.9</span></div>
  <div class="head">
   <button id="newMap">새 맵</button>
   <button class="hide-sm" id="centerBtn">가운데로</button>
@@ -68,10 +69,10 @@ path{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round}
 <div class="workspace" id="ws">
  <div class="stage" id="stage"><svg id="lines"></svg></div>
  <div class="tip">+ → 새 가지 · 노드 선택 → 수정/이모지/이미지 · 빈 곳 드래그 → 이동 · 두 손가락 → 확대/축소</div>
- <div class="zoom-controls"><button id="zoomOut" aria-label="축소">−</button><button id="zoomLabel">100%</button><button id="zoomIn" aria-label="확대">＋</button></div>
+ <div class="zoom-stack"><div class="zoom-controls"><button id="zoomOut" aria-label="축소">−</button><button id="zoomLabel">100%</button><button id="zoomIn" aria-label="확대">＋</button></div><div class="history-controls"><button id="undoBtn" title="실행취소" aria-label="실행취소">↶</button><button id="redoBtn" title="다시실행" aria-label="다시실행">↷</button></div></div>
  <div class="toolbar context-hidden" id="toolbar">
-  <button id="undoBtn" class="mini-action" title="실행취소">↶ 실행취소</button><button id="redoBtn" class="mini-action" title="다시실행">↷ 다시실행</button><button id="addChild">＋ 가지</button><button id="addSibling">＋ 형제</button>
-  <button id="multiBtn">☑ 다중선택</button><button id="editNode">✎ 수정</button><button id="fontBtn">Aa 글자</button><button id="colorBtn">● 색상</button><button id="emojiBtn">☺ 이모지</button><button id="imageBtn">▧ 이미지</button><button id="collapseBtn">− 접기</button><button id="duplicateBtn">⧉ 복제</button><button id="deleteNodeBtn">⌫ 삭제</button>
+  <button id="addChild">＋ 가지</button><button id="addSibling">＋ 형제</button>
+  <button id="editNode" title="수정" aria-label="수정">✎</button><button id="fontBtn" title="글자" aria-label="글자">Aa</button><button id="colorBtn" title="색상" aria-label="색상">●</button><button id="emojiBtn" title="이모지" aria-label="이모지">☺</button><button id="imageBtn" title="이미지" aria-label="이미지">▧</button><button id="multiBtn" title="다중선택" aria-label="다중선택">☑</button><button id="collapseBtn" title="접기/펼치기" aria-label="접기/펼치기">−</button><button id="duplicateBtn" title="복제" aria-label="복제">⧉</button><button id="deleteNodeBtn" title="삭제" aria-label="삭제">⌫</button>
  </div>
  <button class="fab" id="fab">＋</button>
 </div>
@@ -168,8 +169,8 @@ function render(){
  const sn=node(selectedId);
  $('toolbar').classList.toggle('context-hidden', !sn);
  $('addSibling').style.display=sn&&sn.root?'none':'';
- $('colorBtn').style.display='';$('collapseBtn').style.display=sn&&children(sn.id).length?'':'none';$('collapseBtn').textContent=sn&&sn.collapsed?'＋ 펼치기':'− 접기';$('lockBtn').textContent=positionLocked?'🔒 위치 잠금 해제':'🔓 위치 잠금';$('lockBtn').classList.toggle('lock-on',positionLocked);
- $('toggleCredits').textContent=showCredits?'이미지 출처 숨기기':'이미지 출처 보이기';$('multiBtn').classList.toggle('active',multiMode);$('multiBtn').textContent=multiMode?'☑ 다중선택 완료':'☑ 다중선택';positionToolbar();
+ $('colorBtn').style.display='';$('collapseBtn').style.display=sn&&children(sn.id).length?'':'none';$('collapseBtn').textContent=sn&&sn.collapsed?'＋':'−';$('lockBtn').textContent=positionLocked?'🔒 위치 잠금 해제':'🔓 위치 잠금';$('lockBtn').classList.toggle('lock-on',positionLocked);
+ $('toggleCredits').textContent=showCredits?'이미지 출처 숨기기':'이미지 출처 보이기';$('multiBtn').classList.toggle('active',multiMode);$('multiBtn').textContent='☑';$('multiBtn').title=multiMode?'다중선택 완료':'다중선택';positionToolbar();
 }
 
 function depthOf(id){let d=0,n=node(id);while(n&&n.parent){d++;n=node(n.parent)}return d}
@@ -334,7 +335,7 @@ render();
 
 // v2.2: register the versioned service worker so GitHub Pages refreshes cached app files.
 if('serviceWorker' in navigator){
- window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=2.8').then(r=>r.update()).catch(()=>{}));
+ window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=2.9').then(r=>r.update()).catch(()=>{}));
 }
 </script>
 </body></html>
