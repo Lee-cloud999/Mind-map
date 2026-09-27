@@ -22,13 +22,13 @@ header{height:62px;flex:0 0 62px;display:flex;align-items:center;justify-content
 .stage{position:absolute;left:0;top:0;width:2400px;height:1600px;transform-origin:0 0}
 svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 path{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round}
-.node{position:absolute;width:170px;min-height:54px;padding:12px 13px;border-radius:17px;background:#fff;border:1px solid #ddd8cf;box-shadow:0 5px 15px rgba(50,55,48,.08);text-align:center;user-select:none;touch-action:none}
-.node.root{background:var(--green);color:white;font-weight:700;width:200px}
+.node{position:absolute;width:max-content;min-width:170px;max-width:300px;min-height:54px;padding:12px 13px;border-radius:17px;background:#fff;border:1px solid #ddd8cf;box-shadow:0 5px 15px rgba(50,55,48,.08);text-align:center;user-select:none;touch-action:none}
+.node.root{background:var(--green);color:white;font-weight:700;width:max-content;min-width:200px;max-width:340px}
 .node.selected{outline:3px solid rgba(88,113,95,.22);border-color:var(--green)}.node.multi-selected{outline:3px solid rgba(70,105,78,.38);border-color:#58715f}.toolbar #multiBtn.active{background:#dfe8dc;color:#405645;font-weight:700}
 .node .emoji{font-size:24px;line-height:1.1;margin-bottom:4px}
 .node img{display:block;width:100%;aspect-ratio:1/1;height:auto;object-fit:cover;border-radius:11px;margin:0 0 7px}
 .node .credit{font-size:9px;color:#7f857d;margin-top:5px;line-height:1.25}.node.root .credit{color:#dce5df}
-.node .label{word-break:break-word}
+.node .label{white-space:pre-wrap;word-break:keep-all;overflow-wrap:break-word}
 .tip{position:absolute;top:12px;left:12px;background:rgba(255,255,255,.9);border:1px solid #e3dfd5;border-radius:11px;padding:8px 10px;color:#777;font-size:11px;pointer-events:none}
 .toolbar{position:absolute;cursor:grab;left:50%;top:90px;display:flex;gap:3px;padding:6px;background:rgba(255,255,255,.97);border:1px solid #dedad0;border-radius:16px;box-shadow:0 7px 22px rgba(50,50,45,.14);z-index:8;transform:translateX(-50%);max-width:calc(100% - 24px);overflow-x:auto}
 .toolbar.dragging{cursor:grabbing}.toolbar.context-hidden{display:none}.toolbar button{border:0;background:transparent;border-radius:10px;padding:9px 10px;color:#555d55;white-space:nowrap}.toolbar button:active{background:#eee}
@@ -47,7 +47,7 @@ path{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round}
 @media(max-width:600px){.brand{font-size:18px}.head .hide-sm{display:none}.toolbar{width:calc(100% - 24px);justify-content:space-around}.toolbar button{font-size:12px;padding:9px 6px}.emoji-grid{grid-template-columns:repeat(7,1fr)}}
 .toolbar button,.fab,header,header button,.sheet,.sheet button,.sheet input,.menu,.menu button{touch-action:manipulation}.toolbar{touch-action:none}
 
-#textSheet{position:absolute;left:50%;top:88px;bottom:auto;width:min(390px,calc(100% - 28px));transform:translateX(-50%);border-radius:16px;padding:10px 12px;box-shadow:0 10px 30px rgba(0,0,0,.16);overflow:visible}#textSheet h3,#textSheet .sheet-close{display:none}.font-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.font-grid button,.size-row button{border:1px solid #ddd8ce;background:#faf9f6;border-radius:11px;padding:10px 6px;min-height:44px;font-size:13px}.font-grid button.active,.size-row button.active{background:#eaf0e8;border-color:#8fa28e}.size-row{display:flex;gap:7px;flex-wrap:wrap}.size-row button{flex:1}.node .label{line-height:1.35}
+#textSheet{position:absolute;left:50%;top:88px;bottom:auto;width:min(390px,calc(100% - 28px));transform:translateX(-50%);border-radius:16px;padding:10px 12px;box-shadow:0 10px 30px rgba(0,0,0,.16);overflow:visible}#textSheet h3,#textSheet .sheet-close{display:none}.font-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.font-grid button,.size-row button{border:1px solid #ddd8ce;background:#faf9f6;border-radius:11px;padding:10px 6px;min-height:44px;font-size:13px}.font-grid button.active,.size-row button.active{background:#eaf0e8;border-color:#8fa28e}.size-row{display:flex;gap:7px;flex-wrap:wrap}.size-row button{flex:1}.node .label{line-height:1.35}.node .label.inline-edit{user-select:text;-webkit-user-select:text;cursor:text;outline:2px solid rgba(88,113,95,.28);outline-offset:4px;border-radius:5px;min-width:40px}
 .zoom-controls{position:absolute;right:14px;top:14px;z-index:7;display:flex;align-items:center;background:rgba(255,255,255,.96);border:1px solid #dedad0;border-radius:13px;box-shadow:0 5px 16px rgba(50,50,45,.1);overflow:hidden}.zoom-controls button{border:0;background:transparent;min-width:42px;height:40px;padding:0 8px;color:#555;font-weight:700}.zoom-controls #zoomLabel{min-width:58px;font-size:12px;font-weight:600;border-left:1px solid #eee9df;border-right:1px solid #eee9df}.zoom-controls button:active{background:#eee}
 .zoom-stack{position:absolute;right:14px;top:14px;z-index:9;display:flex;flex-direction:column;align-items:flex-end;gap:7px}.zoom-stack .zoom-controls{position:static}.history-controls{display:flex;gap:6px}.history-controls button{width:42px;height:38px;border:1px solid #dedad0;border-radius:11px;background:rgba(255,255,255,.96);box-shadow:0 4px 12px rgba(50,50,45,.08);font-size:20px;color:#555d55;font-weight:700}.history-controls button:disabled{opacity:.35}.history-controls button:active:not(:disabled){background:#eee}.toolbar button[aria-label]{min-width:40px;font-size:16px}.toolbar #fontBtn{font-size:14px;font-weight:700}
 
@@ -59,7 +59,7 @@ path{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round}
 <body>
 <div class="app">
 <header>
- <div class="brand">생각가지 <span class="version">v2.9</span></div>
+ <div class="brand">생각가지 <span class="version">v2.10</span></div>
  <div class="head">
   <button id="newMap">새 맵</button>
   <button class="hide-sm" id="centerBtn">가운데로</button>
@@ -126,7 +126,7 @@ path{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round}
  <div class="switchrow"><span>이 이미지의 출처 표시</span><button class="switch on" id="creditSwitch"></button></div>
  <div class="actions"><button class="cancel" id="removeImage">이미지 제거</button><button class="cancel" data-close>취소</button><button class="primary" id="imageSave">적용</button></div>
 </div>
-<input type="file" id="backupInput" accept=".json,application/json" class="hidden"><input type="file" id="mapInput" accept=".sgj,.json,.mindmap.json,application/json" class="hidden">
+<input type="file" id="backupInput" accept=".json,application/json" class="hidden"><input type="file" id="mapInput" class="hidden">
 <script>
 const KEY='saenggakgaji-offline-v1', RECENT_KEY='saenggakgaji-recents-v1', COLORS=['#dfe8dc','#dfe7ee','#eee0df','#eee7cf','#e9e5ef'], PALETTE=['#dfe8dc','#dfe7ee','#eee0df','#eee7cf','#e9e5ef','#dce9e7','#f0ddd1','#e2e2e2','#cfe0d2','#d8d2e8','#f1d6dc','#d8e3f0'], LINE_PALETTE=['#9fb39b','#9eafc1','#c5a5a2','#c7b878','#afa6c2','#99b8b4','#caa28d','#a9a9a9','#91ad97','#9d92bb','#c997a3','#95abc3'];
 let data, selectedId='root', textMode='child', scale=1, tx=0, ty=0, drag=false, px=0,py=0, pendingImage=null, showCredits=true, pendingColor=COLORS[0], pendingLineColor='#b9c5b7', toolbarManual=false, positionLocked=false, multiMode=false, ctrlHeld=false, suppressClickId=null, suppressClickUntil=0;
@@ -162,7 +162,7 @@ function render(){
    `<div class="label">${esc(n.text)}</div>`+
    (n.image&&n.credit&&showCredits&&n.showCredit!==false?`<div class="credit">${esc(n.credit)}</div>`:'')+(n.collapsed&&children(n.id).length?`<span class="collapsed-badge">+${descendants(n.id).length}</span>`:'');
   el.addEventListener('click',e=>{e.stopPropagation();if(suppressClickId===n.id&&Date.now()<suppressClickUntil){suppressClickId=null;return}let additive=multiMode||ctrlHeld||e.ctrlKey||e.metaKey;if(additive){if(selectedIds.has(n.id))selectedIds.delete(n.id);else selectedIds.add(n.id);if(selectedIds.size){selectedId=n.id}else selectedId='root'}else{selectedIds.clear();selectedId=n.id}toolbarManual=false;render()});bindTouchNode(el);
-  el.addEventListener('dblclick',e=>{e.stopPropagation();selectedId=n.id;openText('edit')});
+  el.addEventListener('dblclick',e=>{e.preventDefault();e.stopPropagation();selectedId=n.id;beginInlineEdit(n.id)});
   stage.appendChild(el)
  });
  drawLines();
@@ -189,7 +189,7 @@ function nodeDown(e){
  render();
 }
 function bindTouchNode(el){
- let startX=0,startY=0,baseX=0,baseY=0,moving=false,id=el.dataset.id,touchAdditive=false;
+ let startX=0,startY=0,baseX=0,baseY=0,moving=false,id=el.dataset.id,touchAdditive=false,lastTap=0;
  el.addEventListener('touchstart',function(e){
    if(e.touches.length!==1)return;
    const n=node(id); if(!n)return;
@@ -204,7 +204,9 @@ function bindTouchNode(el){
  },{passive:false});
  el.addEventListener('touchend',function(e){
    if(moving){resolveCollision(node(id));save();render();return}
-   if(touchAdditive){e.preventDefault();e.stopPropagation();if(selectedIds.has(id))selectedIds.delete(id);else selectedIds.add(id);selectedId=selectedIds.size?id:'root';toolbarManual=false;suppressClickId=id;suppressClickUntil=Date.now()+700;render()}
+   if(touchAdditive){e.preventDefault();e.stopPropagation();if(selectedIds.has(id))selectedIds.delete(id);else selectedIds.add(id);selectedId=selectedIds.size?id:'root';toolbarManual=false;suppressClickId=id;suppressClickUntil=Date.now()+700;render();return}
+   const now=Date.now();
+   if(now-lastTap<360){e.preventDefault();e.stopPropagation();suppressClickId=id;suppressClickUntil=now+800;lastTap=0;selectedId=id;beginInlineEdit(id)}else{lastTap=now}
  },{passive:false});
 }
 function apply(){stage.style.transform=`translate(${tx}px,${ty}px) scale(${scale})`;let z=$('zoomLabel');if(z)z.textContent=Math.round(scale*100)+'%'}
@@ -229,6 +231,22 @@ ws.addEventListener('touchend',e=>{if(e.touches.length<2)pinch=null},{passive:tr
 function openSheet(id){closeSheets();const target=$(id);if(target){target.classList.add('open')}}
 function closeSheets(){document.querySelectorAll('.sheet').forEach(x=>x.classList.remove('open'));if(!$('toolbar').classList.contains('context-hidden')){toolbarManual=false;positionToolbar(true)}}
 document.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeSheets);ws.addEventListener('pointerdown',e=>{let outside=!e.target.closest('.sheet')&&!e.target.closest('.toolbar')&&!e.target.closest('.node');if(outside){closeSheets();selectedIds.clear();multiMode=false;$('toolbar').classList.add('context-hidden')}});
+let inlineEdit=null;
+function beginInlineEdit(id){
+ const n=node(id);if(!n)return;
+ closeSheets();selectedIds.clear();selectedId=id;render();
+ requestAnimationFrame(()=>{
+  const el=stage.querySelector('.node[data-id="'+CSS.escape(id)+'"]'),lab=el&&el.querySelector('.label');if(!lab)return;
+  const original=n.text;inlineEdit={id,original};
+  lab.classList.add('inline-edit');lab.contentEditable='true';lab.setAttribute('role','textbox');lab.setAttribute('aria-multiline','true');
+  lab.focus();
+  const sel=window.getSelection(),range=document.createRange();range.selectNodeContents(lab);range.collapse(false);sel.removeAllRanges();sel.addRange(range);
+  const finish=(saveIt=true)=>{if(!inlineEdit||inlineEdit.id!==id)return;let text=lab.innerText.replace(/\r/g,'').replace(/\n{3,}/g,'\n\n').trim();inlineEdit=null;if(saveIt&&text)n.text=text;else if(!saveIt)n.text=original;save();render()};
+  lab.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();finish(true)}else if(e.key==='Escape'){e.preventDefault();finish(false)}else if(e.key==='Enter'&&e.shiftKey){e.stopPropagation()} });
+  lab.addEventListener('blur',()=>finish(true),{once:true});
+  lab.addEventListener('pointerdown',e=>e.stopPropagation());lab.addEventListener('click',e=>e.stopPropagation());
+ });
+}
 function openText(mode){$('imageSheet').classList.remove('open');textMode=mode;let n=node(selectedId);$('textTitle').textContent=mode==='edit'?'노드 수정':mode==='sibling'?'형제 가지 추가':'하위 가지 추가';$('textInput').value=mode==='edit'&&n?n.text:'';openSheet('textSheet');positionTextSheet();setTimeout(()=>$('textInput').focus(),80)}
 function positionTextSheet(){let n=node(selectedId),sh=$('textSheet');if(!n)return;requestAnimationFrame(()=>{let el=stage.querySelector('.node[data-id="'+CSS.escape(n.id)+'"]');if(!el)return;let r=el.getBoundingClientRect(),wr=ws.getBoundingClientRect(),x=r.left-wr.left+r.width/2,y=r.bottom-wr.top+16;x=Math.max(210,Math.min(ws.clientWidth-210,x));if(y+70>ws.clientHeight)y=Math.max(12,r.top-wr.top-70);sh.style.left=x+'px';sh.style.top=y+'px';let tb=$('toolbar');tb.classList.remove('context-hidden');toolbarManual=false;requestAnimationFrame(()=>{let sr=sh.getBoundingClientRect(),tw=tb.offsetWidth||520,th=tb.offsetHeight||52,txx=sr.left-wr.left+sr.width/2,tyy=sr.bottom-wr.top+14;if(tyy+th>ws.clientHeight-10)tyy=Math.max(10,sr.top-wr.top-th-14);txx=Math.max(tw/2+12,Math.min(ws.clientWidth-tw/2-12,txx));tb.style.left=txx+'px';tb.style.top=tyy+'px'})})}
 $('addChild').onclick=()=>openText('child');
@@ -236,7 +254,7 @@ $('fab').onclick=()=>{
  if(!node(selectedId)) selectedId='root';
  openText('child');
 };
-$('addSibling').onclick=()=>openText('sibling');$('editNode').onclick=()=>openText('edit');
+$('addSibling').onclick=()=>openText('sibling');$('editNode').onclick=()=>beginInlineEdit(selectedId);
 function commitText(){
  let t=$('textInput').value.trim();if(!t)return;let cur=node(selectedId);if(!cur)return;if(textMode==='edit'){cur.text=t}
  else{let parent=textMode==='sibling'?(cur.parent||cur.id):cur.id;let p=node(parent),kids=children(parent);let id='n'+Date.now();
@@ -254,7 +272,7 @@ function renderPalettes(){bindPalette('colorPalette','node');bindPalette('linePa
 function renderRootLineEditor(){let ed=$('rootLineEditor'),r=node('root');if(!ed||!r)return;ed.innerHTML=children(r.id).map(c=>`<div class="root-line-row"><span>${esc(c.text)}</span><div class="root-line-dots">${LINE_PALETTE.map(col=>`<button type="button" class="line-dot${(c.lineColor||'#b9c5b7')===col?' active':''}" data-line-id="${esc(c.id)}" data-c="${col}" style="background:${col}" aria-label="${esc(c.text)} 연결선 색상"></button>`).join('')}</div></div>`).join('');ed.querySelectorAll('.line-dot').forEach(b=>b.addEventListener('pointerup',e=>{e.preventDefault();e.stopPropagation();let c=node(b.dataset.lineId);if(!c)return;c.lineColor=b.dataset.c;save();render();renderRootLineEditor()}))}
 $('colorBtn').onclick=()=>{let n=node(selectedId);if(!n)return;pendingColor=n.color||(n.root?'#dfe8dc':COLORS[0]);pendingLineColor=n.lineColor||n.branchColor||'#b9c5b7';renderPalettes();let wrap=$('rootLineWrap');wrap.classList.toggle('hidden',!n.root);if(n.root)renderRootLineEditor();openSheet('colorSheet')};
 $('colorSave').onclick=()=>{let bases=selectedTargets();if(!bases.length)return;let targets=[...bases];if($('applyDesc').checked&&!selectedIds.size)targets.push(...descendants(bases[0].id));let seen=new Set();targets.filter(x=>!seen.has(x.id)&&seen.add(x.id)).forEach(x=>{x.color=pendingColor;if(!x.root)x.lineColor=pendingLineColor});save();render();closeSheets()};
-function nodeBox(n,x=n.x,y=n.y){let w=n.root?210:170,h=n.image?(n.root?285:245):Math.max(76,58+(String(n.text||'').length>18?28:0));return{x,y,w,h}}
+function nodeBox(n,x=n.x,y=n.y){let lines=String(n.text||'').split('\n'),longest=Math.max(1,...lines.map(v=>v.length)),w=Math.min(n.root?340:300,Math.max(n.root?210:170,90+longest*(n.root?16:12))),h=n.image?(n.root?320:285):Math.max(76,58+Math.max(0,lines.length-1)*34+(longest>16?28:0));return{x,y,w,h}}
 function boxesOverlap(a,b,gap=28){return a.x<a2(b)+gap&&a2(a)+gap>b.x&&a.y<b2(b)+gap&&b2(a)+gap>b.y}function a2(a){return a.x+a.w}function b2(a){return a.y+a.h}
 function resolveCollision(n,ignoreIds=new Set()){if(!n||n.root)return;let baseX=n.x,baseY=n.y,others=data.nodes.filter(o=>o.id!==n.id&&!ignoreIds.has(o.id)&&!hiddenIds().has(o.id));for(let ring=0;ring<18;ring++){let tries=ring?16:1;for(let i=0;i<tries;i++){let ang=(Math.PI*2*i)/tries,dist=ring*34,x=baseX+Math.cos(ang)*dist,y=baseY+Math.sin(ang)*dist,box=nodeBox(n,x,y);if(!others.some(o=>boxesOverlap(box,nodeBox(o)))){n.x=x;n.y=y;return}}}n.x=baseX+60;n.y=baseY+60}
 function resolveAllCollisions(){let placed=[];data.nodes.filter(n=>!n.root&&!hiddenIds().has(n.id)).forEach(n=>{let baseX=n.x,baseY=n.y;for(let ring=0;ring<14;ring++){let found=false,tries=ring?14:1;for(let i=0;i<tries;i++){let ang=(Math.PI*2*i)/tries,dist=ring*30,box=nodeBox(n,baseX+Math.cos(ang)*dist,baseY+Math.sin(ang)*dist);if(!placed.some(p=>boxesOverlap(box,p))){n.x=box.x;n.y=box.y;placed.push(box);found=true;break}}if(found)break}})}
@@ -326,8 +344,12 @@ document.addEventListener('keydown',e=>{if(e.key!=='Delete'&&e.key!=='Backspace'
 $('newMap').onclick=()=>{if(confirm('새 마인드맵을 시작할까요? 현재 맵은 지워집니다.')){data=fresh();showCredits=true;selectedId='root';save();render();center()}};
 function validMap(o){return o&&Array.isArray(o.nodes)&&o.nodes.every(n=>n&&typeof n.id==='string'&&typeof n.text==='string')}
 $('saveMapBtn').onclick=async()=>{let base=(node('root')?.text||'생각가지').replace(/[\/:*?"<>|]/g,'-').slice(0,40),asked=prompt('저장할 파일 이름을 입력해 주세요.',base);if(asked===null){$('menu').classList.remove('open');return}asked=asked.trim().replace(/[\/:*?"<>|]/g,'-')||'생각가지';asked=asked.replace(/\.sgj$/i,'').replace(/\.mindmap\.json$/i,'').replace(/\.json$/i,'');let title=asked+'.sgj',payload={...data,fileFormat:'saenggakgaji-mindmap',fileVersion:4,savedAt:new Date().toISOString()},blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),file=new File([blob],title,{type:'application/json'});try{let isiOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);if(!isiOS&&window.showSaveFilePicker){let h=await showSaveFilePicker({suggestedName:title,types:[{description:'생각가지 마인드맵',accept:{'application/json':['.sgj']}}]});let w=await h.createWritable();await w.write(blob);await w.close()}else if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:'다른 이름으로 저장'});}else{let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=title;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),800)}}catch(e){if(e.name!=='AbortError')alert('파일을 저장하지 못했어요.')} $('menu').classList.remove('open')};
-$('openMapBtn').onclick=()=>{$('mapInput').value='';$('mapInput').click();$('menu').classList.remove('open')};
-$('mapInput').onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let o=JSON.parse(r.result);if(!validMap(o))throw Error();data=o;showCredits=data.showCredits!==false;positionLocked=!!data.positionLocked;selectedId=node('root')?'root':data.nodes[0].id;lastSnapshot=JSON.stringify(data);undoStack=[lastSnapshot];redoStack=[];save();render();center()}catch(err){alert('생각가지 마인드맵 파일을 읽을 수 없어요.')}};r.readAsText(f)};
+$('openMapBtn').onclick=async()=>{ $('menu').classList.remove('open');
+ try{let isiOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);if(!isiOS&&window.showOpenFilePicker){let [h]=await showOpenFilePicker({multiple:false,types:[{description:'생각가지 파일',accept:{'application/json':['.sgj','.json']}}]});if(h){let f=await h.getFile();loadMapFile(f)}return}}catch(e){if(e.name!=='AbortError')console.warn(e)}
+ $('mapInput').value='';$('mapInput').click();
+};
+function loadMapFile(f){if(!f)return;let r=new FileReader();r.onload=()=>{try{let o=JSON.parse(r.result);if(!validMap(o))throw Error();data=o;showCredits=data.showCredits!==false;positionLocked=!!data.positionLocked;selectedId=node('root')?'root':data.nodes[0].id;lastSnapshot=JSON.stringify(data);undoStack=[lastSnapshot];redoStack=[];save();render();center()}catch(err){alert('생각가지 파일을 읽을 수 없어요. .sgj 또는 이전 .mindmap.json 파일인지 확인해 주세요.')}};r.readAsText(f)}
+$('mapInput').onchange=e=>loadMapFile(e.target.files[0]);
 $('exportBtn').onclick=()=>{let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='생각가지-백업.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500);$('menu').classList.remove('open')};
 $('importBtn').onclick=()=>$('backupInput').click();
 $('backupInput').onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{data=JSON.parse(r.result);showCredits=data.showCredits!==false;selectedId=data.nodes[0]?.id||'root';save();render();center()}catch(err){alert('백업 파일을 읽을 수 없어요.')}};r.readAsText(f)};
