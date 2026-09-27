@@ -25,28 +25,28 @@ path{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round}
 .node .credit{font-size:9px;color:#7f857d;margin-top:5px;line-height:1.25}.node.root .credit{color:#dce5df}
 .node .label{word-break:break-word}
 .tip{position:absolute;top:12px;left:12px;background:rgba(255,255,255,.9);border:1px solid #e3dfd5;border-radius:11px;padding:8px 10px;color:#777;font-size:11px;pointer-events:none}
-.toolbar{position:absolute;left:50%;bottom:max(14px,env(safe-area-inset-bottom));transform:translateX(-50%);display:flex;gap:3px;padding:6px;background:rgba(255,255,255,.96);border:1px solid #dedad0;border-radius:15px;box-shadow:0 7px 22px rgba(50,50,45,.12);z-index:4}
+.toolbar{position:absolute;left:50%;top:90px;display:flex;gap:3px;padding:6px;background:rgba(255,255,255,.97);border:1px solid #dedad0;border-radius:16px;box-shadow:0 7px 22px rgba(50,50,45,.14);z-index:8;transform:translateX(-50%);max-width:calc(100% - 24px);overflow-x:auto}
 .toolbar.context-hidden{display:none}.toolbar button{border:0;background:transparent;border-radius:10px;padding:9px 10px;color:#555d55;white-space:nowrap}.toolbar button:active{background:#eee}
 .fab{position:absolute;right:15px;bottom:76px;width:54px;height:54px;border:0;border-radius:50%;background:var(--green);color:#fff;font-size:28px;box-shadow:0 7px 20px rgba(50,70,55,.25);z-index:4}
 .sheet{display:none;position:absolute;z-index:20;left:50%;bottom:0;width:min(560px,100%);height:auto;max-height:min(68vh,560px);overflow-y:auto;-webkit-overflow-scrolling:touch;transform:translate(-50%,105%);transition:.2s;background:#fff;border-radius:22px 22px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));box-shadow:0 -12px 36px rgba(0,0,0,.14)}
 .sheet.open{display:block;transform:translate(-50%,0)}
 .sheet h3{margin:0 38px 13px 0;font-size:17px}.compact-sheet{padding-top:14px;padding-bottom:calc(14px + env(safe-area-inset-bottom));max-height:none}.compact-sheet h3{margin-bottom:8px}.compact-sheet .textin{padding:10px 12px}.sheet-close{position:sticky;float:right;top:0;z-index:3;width:34px;height:34px;margin:-5px -3px 0 8px;border:0;border-radius:50%;background:#f0eee9;font-size:20px;color:#555}.row{display:flex;gap:8px}.textin,.search{width:100%;border:1px solid #ddd8ce;border-radius:12px;padding:12px;outline:none}.textin:focus,.search:focus{border-color:#8fa28e}
 .actions{display:flex;justify-content:flex-end;gap:8px;margin-top:13px}.actions button,.widebtn{border:0;border-radius:11px;padding:10px 14px}.cancel{background:#eee}.primary{background:var(--green);color:#fff}
-.emoji-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-top:10px}.emoji-grid button{border:0;background:#f5f4f0;border-radius:10px;font-size:23px;padding:8px 2px}
+.emoji-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:10px}.emoji-grid button{border:0;background:#f5f4f0;border-radius:10px;font-size:23px;padding:8px 2px}
 .tabs{display:flex;gap:7px;margin-bottom:12px}.tabs button{flex:1;border:1px solid #ddd8ce;background:#faf9f6;border-radius:11px;padding:9px}.tabs button.active{background:#eaf0e8;border-color:#bdcbb9}
 .preview{margin-top:12px;border:1px dashed #d5d1c7;border-radius:14px;padding:12px;text-align:center;color:#858b82;font-size:12px}.preview img{max-width:100%;max-height:180px;border-radius:12px}
 .switchrow{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-top:1px solid #eeeae2;margin-top:10px}.switch{width:46px;height:27px;border-radius:20px;background:#ccc;position:relative;border:0}.switch:after{content:"";position:absolute;width:21px;height:21px;left:3px;top:3px;border-radius:50%;background:#fff;transition:.15s}.switch.on{background:var(--green)}.switch.on:after{left:22px}
 .menu{position:absolute;top:68px;right:12px;z-index:15;background:#fff;border:1px solid #ddd9cf;border-radius:14px;padding:7px;box-shadow:0 8px 25px rgba(0,0,0,.12);display:none}.menu.open{display:block}.menu button{display:block;width:100%;border:0;background:none;text-align:left;padding:10px 12px;border-radius:9px}.menu button:active{background:#eee}
 .emoji-pages{display:flex;justify-content:center;align-items:center;gap:5px;flex-wrap:wrap;margin:12px 0 4px}.emoji-pages button{min-width:34px;height:34px;border:1px solid #ddd8ce;border-radius:9px;background:#faf9f6;color:#555}.emoji-pages button.active{background:var(--green);color:#fff;border-color:var(--green)}
 .palette{display:grid;grid-template-columns:repeat(6,1fr);gap:9px;margin:10px 0}.swatch{height:42px;border:2px solid transparent;border-radius:12px}.swatch.active{border-color:#4f5f52;outline:2px solid #d8ded7}.sectionlabel{font-size:12px;color:#777;margin:12px 0 6px}.recent-images{display:flex;gap:8px;overflow-x:auto;padding:4px 0 8px}.recent-images button{flex:0 0 78px;height:62px;padding:0;border:2px solid transparent;border-radius:10px;overflow:hidden;background:#eee}.recent-images img{width:100%;height:100%;object-fit:cover}.hidden{display:none!important}
-@media(max-width:600px){.brand{font-size:18px}.head .hide-sm{display:none}.toolbar{width:calc(100% - 24px);justify-content:space-around}.toolbar button{font-size:12px;padding:9px 6px}.emoji-grid{grid-template-columns:repeat(5,1fr)}}
+@media(max-width:600px){.brand{font-size:18px}.head .hide-sm{display:none}.toolbar{width:calc(100% - 24px);justify-content:space-around}.toolbar button{font-size:12px;padding:9px 6px}.emoji-grid{grid-template-columns:repeat(7,1fr)}}
 .toolbar,.toolbar button,.fab,header,header button,.sheet,.sheet button,.sheet input,.menu,.menu button{touch-action:manipulation}
 </style>
 </head>
 <body>
 <div class="app">
 <header>
- <div class="brand">생각가지 <span class="version">v2</span></div>
+ <div class="brand">생각가지 <span class="version">v2.1</span></div>
  <div class="head">
   <button id="newMap">새 맵</button>
   <button class="hide-sm" id="centerBtn">가운데로</button>
@@ -58,7 +58,7 @@ path{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round}
  <div class="tip">+ → 새 가지 · 노드 선택 → 수정/이모지/이미지 · 빈 곳 드래그 → 화면 이동</div>
  <div class="toolbar context-hidden" id="toolbar">
   <button id="addChild">＋ 가지</button><button id="addSibling">＋ 형제</button>
-  <button id="editNode">✎ 수정</button><button id="colorBtn">● 색상</button><button id="emojiBtn">☺ 이모지</button><button id="imageBtn">▧ 이미지</button>
+  <button id="editNode">✎ 수정</button><button id="fontBtn">Aa 글자</button><button id="colorBtn">● 색상</button><button id="emojiBtn">☺ 이모지</button><button id="imageBtn">▧ 이미지</button>
  </div>
  <button class="fab" id="fab">＋</button>
 </div>
@@ -88,6 +88,7 @@ path{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round}
  <div class="actions"><button class="cancel" data-close>취소</button><button class="primary" id="colorSave">적용</button></div>
 </div>
 
+<div class="sheet" id="fontSheet"><button class="sheet-close" data-close aria-label="닫기">×</button><h3>글자 설정</h3><div class="sectionlabel">폰트</div><div class="font-grid" id="fontGrid"></div><div class="sectionlabel">글자 크기</div><div class="size-row" id="sizeRow"></div><label style="display:flex;align-items:center;gap:9px;margin-top:14px"><input type="checkbox" id="fontDesc"> 하위 가지에도 적용</label><div class="actions"><button class="cancel" data-close>취소</button><button class="primary" id="fontSave">적용</button></div></div>
 <div class="sheet" id="emojiSheet">
  <button class="sheet-close" data-close aria-label="닫기">×</button>
  <h3>이모지 선택</h3>
@@ -132,7 +133,7 @@ function render(){
  stage.querySelectorAll('.node').forEach(n=>n.remove());
  data.nodes.forEach(n=>{
   const el=document.createElement('div');el.className='node'+(n.root?' root':'')+(n.id===selectedId?' selected':'');
-  el.dataset.id=n.id;el.style.left=n.x+'px';el.style.top=n.y+'px';if(!n.root)el.style.background=n.color||'#fff';
+  el.dataset.id=n.id;el.style.left=n.x+'px';el.style.top=n.y+'px';if(!n.root)el.style.background=n.color||'#fff';el.style.fontFamily=n.fontFamily||'inherit';el.style.fontSize=(n.fontSize||defaultFontSize(n.id))+'px';
   el.innerHTML=(n.image?`<img src="${n.image}">`:'')+(n.emoji?`<div class="emoji">${esc(n.emoji)}</div>`:'')+
    `<div class="label">${esc(n.text)}</div>`+
    (n.image&&n.credit&&showCredits&&n.showCredit!==false?`<div class="credit">${esc(n.credit)}</div>`:'');
@@ -144,9 +145,13 @@ function render(){
  const sn=node(selectedId);
  $('toolbar').classList.toggle('context-hidden', !sn);
  $('addSibling').style.display=sn&&sn.root?'none':'';
- $('colorBtn').style.display=sn&&sn.root?'none':'';
- $('toggleCredits').textContent=showCredits?'이미지 출처 숨기기':'이미지 출처 보이기';
+ $('colorBtn').style.display='';
+ $('toggleCredits').textContent=showCredits?'이미지 출처 숨기기':'이미지 출처 보이기';positionToolbar();
 }
+
+function depthOf(id){let d=0,n=node(id);while(n&&n.parent){d++;n=node(n.parent)}return d}
+function defaultFontSize(id){let d=depthOf(id);return d===0?22:d===1?18:d===2?16:14}
+function positionToolbar(){let n=node(selectedId),tb=$('toolbar');if(!n)return;let x=tx+(n.x+85)*scale,y=ty+(n.y+72)*scale;x=Math.max(180,Math.min(ws.clientWidth-180,x));y=Math.max(72,Math.min(ws.clientHeight-70,y));tb.style.left=x+'px';tb.style.top=y+'px'}
 function drawLines(){
  let s='';data.nodes.filter(n=>n.parent).forEach(n=>{let p=node(n.parent);if(!p)return;
  let x1=p.x+85,y1=p.y+35,x2=n.x+85,y2=n.y+35,mid=(x1+x2)/2;
@@ -192,8 +197,9 @@ ws.addEventListener('wheel',e=>{e.preventDefault();scale=Math.max(.3,Math.min(1.
 
 function openSheet(id){closeSheets();const target=$(id);if(target){target.classList.add('open')}}
 function closeSheets(){document.querySelectorAll('.sheet').forEach(x=>x.classList.remove('open'))}
-document.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeSheets);
-function openText(mode){$('imageSheet').classList.remove('open');textMode=mode;let n=node(selectedId);$('textTitle').textContent=mode==='edit'?'노드 수정':mode==='sibling'?'형제 가지 추가':'하위 가지 추가';$('textInput').value=mode==='edit'&&n?n.text:'';openSheet('textSheet');setTimeout(()=>$('textInput').focus(),180)}
+document.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeSheets);ws.addEventListener('pointerdown',e=>{if(document.querySelector('.sheet.open')&&!e.target.closest('.sheet')&&!e.target.closest('.toolbar')&&!e.target.closest('.node'))closeSheets()});
+function openText(mode){$('imageSheet').classList.remove('open');textMode=mode;let n=node(selectedId);$('textTitle').textContent=mode==='edit'?'노드 수정':mode==='sibling'?'형제 가지 추가':'하위 가지 추가';$('textInput').value=mode==='edit'&&n?n.text:'';openSheet('textSheet');positionTextSheet();setTimeout(()=>$('textInput').focus(),80)}
+function positionTextSheet(){let n=node(selectedId),sh=$('textSheet');if(!n)return;let x=tx+(n.x+85)*scale,y=ty+(n.y-10)*scale;x=Math.max(210,Math.min(ws.clientWidth-210,x));y=Math.max(70,Math.min(ws.clientHeight-90,y));sh.style.left=x+'px';sh.style.top=y+'px'}
 $('addChild').onclick=()=>openText('child');
 $('fab').onclick=()=>{
  if(!node(selectedId)) selectedId='root';
@@ -205,26 +211,30 @@ function commitText(){
  else{let parent=textMode==='sibling'?(cur.parent||cur.id):cur.id;let p=node(parent),kids=children(parent);let id='n'+Date.now();
  let side=p.x<1100?-1:1;if(p.root)side=(kids.length%2===0?1:-1);
  let x=p.x+side*300,y=p.y+(kids.length-Math.floor(kids.length/2))*115;
- data.nodes.push({id,parent,text:t,x,y,color:COLORS[kids.length%COLORS.length],emoji:'',image:null,credit:'',showCredit:true});selectedId=id}
+ data.nodes.push({id,parent,text:t,x,y,color:COLORS[kids.length%COLORS.length],emoji:'',image:null,credit:'',showCredit:true});selectedId=id;autoArrange(false)}
  save();render();closeSheets()
 }
 $('textInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();commitText()}else if(e.key==='Escape')closeSheets()});
 
 function descendants(id){let out=[],q=[id];while(q.length){let a=q.shift();children(a).forEach(c=>{out.push(c);q.push(c.id)})}return out}
 function renderPalette(){ $('colorPalette').innerHTML=PALETTE.map(c=>`<button type="button" class="swatch${c===pendingColor?' active':''}" data-c="${c}" style="background:${c}" aria-label="색상 ${c}"></button>`).join(''); $('colorPalette').querySelectorAll('button').forEach(b=>{const pick=e=>{e.preventDefault();e.stopPropagation();pendingColor=b.dataset.c;renderPalette()};b.addEventListener('click',pick);b.addEventListener('touchend',pick,{passive:false})})}
-$('colorBtn').onclick=()=>{let n=node(selectedId);if(!n||n.root)return;pendingColor=n.branchColor||n.color||COLORS[0];renderPalette();openSheet('colorSheet')};
-$('colorSave').onclick=()=>{let n=node(selectedId);if(!n||n.root)return;let targets=[n];if($('applyDesc').checked)targets.push(...descendants(n.id));targets.forEach(x=>{x.branchColor=pendingColor;x.color=pendingColor});save();render();closeSheets()};
-function autoArrange(){let root=node('root');if(!root)return;root.x=1100;root.y=760;let first=children(root.id), left=[],right=[];first.forEach((n,i)=>(i%2?left:right).push(n));function placeGroup(group,side){let total=group.length;group.forEach((n,i)=>{n.x=root.x+side*360;n.y=root.y+(i-(total-1)/2)*230;placeKids(n,side,1)})}function placeKids(p,side,depth){let kids=children(p.id),total=kids.length;kids.forEach((n,i)=>{n.x=p.x+side*280;n.y=p.y+(i-(total-1)/2)*130;placeKids(n,side,depth+1)})}placeGroup(right,1);placeGroup(left,-1);save();render();center()}
+$('colorBtn').onclick=()=>{let n=node(selectedId);if(!n)return;pendingColor=n.branchColor||n.color||COLORS[0];renderPalette();openSheet('colorSheet')};
+$('colorSave').onclick=()=>{let n=node(selectedId);if(!n)return;let targets=[n];if($('applyDesc').checked)targets.push(...descendants(n.id));targets.forEach(x=>{x.branchColor=pendingColor;x.color=pendingColor});save();render();closeSheets()};
+function autoArrange(doCenter=true){let root=node('root');if(!root)return;root.x=1100;root.y=760;let first=children(root.id), left=[],right=[];first.forEach((n,i)=>(i%2?left:right).push(n));function placeGroup(group,side){let total=group.length;group.forEach((n,i)=>{n.x=root.x+side*360;n.y=root.y+(i-(total-1)/2)*230;placeKids(n,side,1)})}function placeKids(p,side,depth){let kids=children(p.id),total=kids.length;kids.forEach((n,i)=>{n.x=p.x+side*280;n.y=p.y+(i-(total-1)/2)*130;placeKids(n,side,depth+1)})}placeGroup(right,1);placeGroup(left,-1);save();render();if(doCenter)center()}
 $('autoArrangeBtn').onclick=()=>{autoArrange();$('menu').classList.remove('open')};
 
+
+const FONTS=[['기본 고딕','-apple-system,BlinkMacSystemFont,Apple SD Gothic Neo,Noto Sans KR,sans-serif'],['명조','Georgia,Noto Serif KR,serif'],['마루부리','MaruBuri,Noto Serif KR,serif'],['손글씨','Nanum Pen Script,Apple SD Gothic Neo,cursive']];let pendingFont='',pendingSize=16;
+function renderFontControls(){let n=node(selectedId);pendingFont=n.fontFamily||'inherit';pendingSize=n.fontSize||defaultFontSize(n.id);$('fontGrid').innerHTML=FONTS.map(([a,f])=>`<button type="button" data-f="${f}" class="${pendingFont===f?'active':''}">${a}</button>`).join('');$('fontGrid').querySelectorAll('button').forEach(b=>b.onclick=()=>{pendingFont=b.dataset.f;renderFontControls()});$('sizeRow').innerHTML=[12,14,16,18,20,22,24,28].map(z=>`<button type="button" data-z="${z}" class="${pendingSize===z?'active':''}">${z}</button>`).join('');$('sizeRow').querySelectorAll('button').forEach(b=>b.onclick=()=>{pendingSize=+b.dataset.z;renderFontControls()})}
+$('fontBtn').onclick=()=>{renderFontControls();openSheet('fontSheet')};$('fontSave').onclick=()=>{let n=node(selectedId);if(!n)return;let targets=[n];if($('fontDesc').checked)targets.push(...descendants(n.id));targets.forEach((x,i)=>{x.fontFamily=pendingFont;x.fontSize=i===0?pendingSize:Math.max(12,pendingSize-depthOf(x.id)*2+depthOf(n.id)*2)});save();render();closeSheets()};
 const emojiData=['😀','😃','😄','😁','😆','😅','😂','🤣','😊','😇','🙂','🙃','😉','😌','😍','🥰','😘','😗','😙','😚','😋','😛','😝','😜','🤪','🤨','🧐','🤓','😎','🥸','🤩','🥳','😏','😒','😞','😔','😟','😕','🙁','☹️','😣','😖','😫','😩','🥺','😢','😭','😤','😠','😡','🤬','🤯','😳','🥵','🥶','😱','😨','😰','😥','😓','🤗','🤔','🫣','🤭','🫢','🫡','🤫','🫠','🤥','😶','😐','😑','😬','🙄','😯','😦','😧','😮','😲','🥱','😴','🤤','😪','😵','🤐','🥴','🤢','🤮','🤧','😷','🤒','🤕','🤑','🤠','😈','👿','👻','💀','☠️','👽','🤖','💩','😺','😸','😹','😻','😼','😽','🙀','😿','😾','🙈','🙉','🙊','💋','💌','💘','💝','💖','💗','💓','💞','💕','💟','❣️','❤️','🧡','💛','💚','💙','💜','🤎','🖤','🤍','💔','❤️\u200d🔥','❤️\u200d🩹','💯','💢','💥','💫','💦','💨','🕳️','💬','👁️\u200d🗨️','🗨️','🗯️','💭','💤','👋','🤚','🖐️','✋','🖖','🫱','🫲','🫳','🫴','👌','🤌','🤏','✌️','🤞','🫰','🤟','🤘','🤙','👈','👉','👆','👇','☝️','👍','👎','✊','👊','🤛','🤜','👏','🙌','🫶','👐','🤲','🤝','🙏','✍️','💅','🤳','💪','🦾','🦿','🦵','🦶','👂','👃','🧠','🫀','🫁','🦷','🦴','👀','👁️','👅','👄','🧑','👶','🧒','👧','👦','👩','🧔','👵','👴','🙍','🙎','🙅','🙆','💁','🙋','🧏','🙇','🤦','🤷','👮','👷','💂','🕵️','👩\u200d⚕️','👩\u200d🌾','👩\u200d🍳','👩\u200d🎓','👩\u200d🎤','👩\u200d🏫','👩\u200d💻','👩\u200d💼','👩\u200d🔧','👩\u200d🔬','👩\u200d🎨','👩\u200d🚒','👩\u200d✈️','👩\u200d🚀','👩\u200d⚖️','🦸','🦹','🧙','🧚','🧛','🧜','🧝','🧞','🧟','💆','💇','🚶','🧍','🧎','🏃','💃','🕺','👯','🧖','🧗','🤺','🏇','⛷️','🏂','🏌️','🏄','🚣','🏊','⛹️','🏋️','🚴','🤸','🤼','🤽','🤾','🤹','🧘','🛀','🛌','👭','👫','👬','💏','💑','👪','🗣️','👤','👥','🫂','👣','🐵','🐒','🦍','🦧','🐶','🐕','🦮','🐩','🐺','🦊','🦝','🐱','🐈','🦁','🐯','🐅','🐆','🐴','🫎','🫏','🐎','🦄','🦓','🦌','🦬','🐮','🐂','🐃','🐄','🐷','🐖','🐗','🐽','🐏','🐑','🐐','🐪','🐫','🦙','🦒','🐘','🦣','🦏','🦛','🐭','🐁','🐀','🐹','🐰','🐇','🐿️','🦫','🦔','🦇','🐻','🐨','🐼','🦥','🦦','🦨','🦘','🦡','🐾','🦃','🐔','🐓','🐣','🐤','🐥','🐦','🐧','🕊️','🦅','🦆','🦢','🦉','🦤','🪶','🦩','🦚','🦜','🪽','🐦\u200d⬛','🪿','🐸','🐊','🐢','🦎','🐍','🐲','🐉','🦕','🦖','🐳','🐋','🐬','🦭','🐟','🐠','🐡','🦈','🐙','🐚','🪸','🪼','🐌','🦋','🐛','🐜','🐝','🪲','🐞','🦗','🪳','🕷️','🦂','🦟','🪰','🪱','🦠','💐','🌸','💮','🪷','🌹','🥀','🌺','🌻','🌼','🌷','🪻','🌱','🪴','🌲','🌳','🌴','🌵','🌾','🌿','☘️','🍀','🍁','🍂','🍃','🪹','🪺','🍄','🌰','🦀','🦞','🦐','🦑','🌍','🌎','🌏','🌐','🗺️','🗾','🧭','🏔️','⛰️','🌋','🗻','🏕️','🏖️','🏜️','🏝️','🏞️','🏟️','🏛️','🏗️','🧱','🪨','🪵','🛖','🏘️','🏠','🏡','🏢','🏥','🏦','🏨','🏪','🏫','🏬','🏭','🏯','🏰','💒','🗼','🗽','⛪','🕌','🛕','🕍','⛩️','🕋','⛲','⛺','🌁','🌃','🏙️','🌄','🌅','🌆','🌇','🌉','♨️','🎠','🛝','🎡','🎢','💈','🎪','🚂','🚃','🚄','🚅','🚆','🚇','🚈','🚉','🚊','🚝','🚞','🚋','🚌','🚍','🚎','🚐','🚑','🚒','🚓','🚕','🚗','🚙','🛻','🚚','🚛','🚜','🏎️','🏍️','🛵','🚲','🛴','🛹','🛼','🚏','🛣️','🛤️','🛢️','⛽','🛞','🚨','🚥','🚦','🛑','🚧','⚓','🛟','⛵','🛶','🚤','🛳️','⛴️','🛥️','🚢','✈️','🛩️','🛫','🛬','🪂','💺','🚁','🚟','🚠','🚡','🛰️','🚀','🛸','🛎️','🧳','⌛','⏳','⌚','⏰','⏱️','⏲️','🕰️','🌑','🌒','🌓','🌔','🌕','🌖','🌗','🌘','🌙','🌚','🌛','🌜','🌡️','☀️','🌝','🌞','🪐','⭐','🌟','🌠','🌌','☁️','⛅','⛈️','🌤️','🌥️','🌦️','🌧️','🌨️','🌩️','🌪️','🌫️','🌬️','🌈','☂️','☔','⚡','❄️','☃️','⛄','☄️','🔥','💧','🌊','🎃','🎄','🎆','🎇','🧨','✨','🎈','🎉','🎊','🎋','🎍','🎎','🎏','🎐','🎑','🧧','🎀','🎁','🎟️','🎫','🎖️','🏆','🏅','🥇','🥈','🥉','⚽','⚾','🥎','🏀','🏐','🏈','🏉','🎾','🥏','🎳','🏏','🏑','🏒','🥍','🏓','🏸','🥊','🥋','🥅','⛳','⛸️','🎣','🤿','🎽','🎿','🛷','🥌','🎯','🪀','🪁','🔫','🎱','🔮','🪄','🎮','🕹️','🎰','🎲','🧩','🧸','🪅','🪩','🪆','♠️','♥️','♦️','♣️','♟️','🃏','🀄','🎴','🎭','🖼️','🎨','🧵','🪡','🧶','🪢','👓','🕶️','🥽','🥼','🦺','👔','👕','👖','🧣','🧤','🧥','🧦','👗','👘','🥻','🩱','🩲','🩳','👙','👚','🪭','👛','👜','👝','🛍️','🎒','🩴','👞','👟','🥾','🥿','👠','👡','🩰','👢','🪮','👑','👒','🎩','🎓','🧢','🪖','⛑️','📿','💄','💍','💎','🔇','🔈','🔉','🔊','📢','📣','📯','🔔','🔕','🎼','🎵','🎶','🎙️','🎚️','🎛️','🎤','🎧','📻','🎷','🪗','🎸','🎹','🎺','🎻','🪕','🥁','🪘','📱','📲','☎️','📞','📟','📠','🔋','🪫','🔌','💻','🖥️','🖨️','⌨️','🖱️','🖲️','💽','💾','💿','📀','🧮','🎥','🎞️','📽️','🎬','📺','📷','📸','📹','📼','🔍','🔎','🕯️','💡','🔦','🏮','🪔','📔','📕','📖','📗','📘','📙','📚','📓','📒','📃','📜','📄','📰','🗞️','📑','🔖','🏷️','💰','🪙','💴','💵','💶','💷','💸','💳','🧾','💹','✉️','📧','📨','📩','📤','📥','📦','📫','📪','📬','📭','📮','🗳️','✏️','✒️','🖋️','🖊️','🖌️','🖍️','📝','💼','📁','📂','🗂️','📅','📆','🗒️','🗓️','📇','📈','📉','📊','📋','📌','📍','📎','🖇️','📏','📐','✂️','🗃️','🗄️','🗑️','🔒','🔓','🔏','🔐','🔑','🗝️','🔨','🪓','⛏️','⚒️','🛠️','🗡️','⚔️','🧲','🪜','⚙️','🧰','🪛','🔧','🔩','⚖️','🔗','⛓️','🪝','🧪','🧫','🧬','🔬','🔭','📡','💊','🩹','🩼','🩺','🚪','🪑','🚽','🚿','🛁','🪥','🪒','🧴','🧷','🧹','🧺','🧻','🪣','🧼','🫧','🪥','🧽','🧯','🛒','🚬','⚰️','🪦','⚱️','🧿','🪬','🗿','🪧','🪪'];
 let emojiPage=1;const EMOJI_PAGE_SIZE=35;
-function chooseEmoji(e){node(selectedId).emoji=e;recents.emojis=[e,...recents.emojis.filter(x=>x!==e)].slice(0,10);saveRecents();save();render();closeSheets()}
+function chooseEmoji(e){node(selectedId).emoji=e;recents.emojis=[e,...recents.emojis.filter(x=>x!==e)].slice(0,14);saveRecents();save();render();closeSheets()}
 function renderEmoji(q=''){
  let z=q.trim().toLowerCase(), all=z?emojiData.filter(e=>e.includes(z)):emojiData, pages=Math.max(1,Math.ceil(all.length/EMOJI_PAGE_SIZE));emojiPage=Math.min(Math.max(1,emojiPage),pages);
  let shown=all.slice((emojiPage-1)*EMOJI_PAGE_SIZE,emojiPage*EMOJI_PAGE_SIZE);
  $('emojiGrid').innerHTML=shown.map(e=>`<button data-e="${e}">${e}</button>`).join('')||'<div style="grid-column:1/-1;color:#888;padding:12px">검색 결과가 없어요.</div>';
- $('recentEmojiLabel').style.display=z?'none':'block';$('recentEmojiGrid').style.display=z?'none':'grid';$('recentEmojiGrid').innerHTML=recents.emojis.slice(0,10).map(e=>`<button data-e="${e}">${e}</button>`).join('')||'<span style="grid-column:1/-1;color:#999;font-size:12px">아직 없어요.</span>';
+ $('recentEmojiLabel').style.display=z?'none':'block';$('recentEmojiGrid').style.display=z?'none':'grid';$('recentEmojiGrid').innerHTML=recents.emojis.slice(0,14).map(e=>`<button data-e="${e}">${e}</button>`).join('')||'<span style="grid-column:1/-1;color:#999;font-size:12px">아직 없어요.</span>';
  let nav='';if(pages>1){nav+='<button data-p="prev">‹</button>';let start=Math.max(1,emojiPage-2),end=Math.min(pages,start+4);start=Math.max(1,end-4);if(start>1)nav+='<span>…</span>';for(let i=start;i<=end;i++)nav+=`<button data-p="${i}" class="${i===emojiPage?'active':''}">${i}</button>`;if(end<pages)nav+='<span>…</span>';nav+='<button data-p="next">›</button>'}$('emojiPages').innerHTML=nav;
  [...$('emojiGrid').querySelectorAll('button'),...$('recentEmojiGrid').querySelectorAll('button')].forEach(b=>b.onclick=()=>chooseEmoji(b.dataset.e));
  $('emojiPages').querySelectorAll('button').forEach(b=>b.onclick=()=>{let p=b.dataset.p;emojiPage=p==='prev'?Math.max(1,emojiPage-1):p==='next'?Math.min(pages,emojiPage+1):+p;renderEmoji(q)})
@@ -255,9 +265,12 @@ $('importBtn').onclick=()=>$('backupInput').click();
 $('backupInput').onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{data=JSON.parse(r.result);showCredits=data.showCredits!==false;selectedId=data.nodes[0]?.id||'root';save();render();center()}catch(err){alert('백업 파일을 읽을 수 없어요.')}};r.readAsText(f)};
 render();
 
-// v2: register the versioned service worker so GitHub Pages refreshes cached app files.
+// v2.1: register the versioned service worker so GitHub Pages refreshes cached app files.
 if('serviceWorker' in navigator){
- window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=2').then(r=>r.update()).catch(()=>{}));
+ window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=2.1').then(r=>r.update()).catch(()=>{}));
 }
 </script>
 </body></html>
+<style>
+#textSheet{position:absolute;left:50%;top:88px;bottom:auto;width:min(390px,calc(100% - 28px));transform:translateX(-50%);border-radius:16px;padding:10px 12px;box-shadow:0 10px 30px rgba(0,0,0,.16);overflow:visible}#textSheet h3,#textSheet .sheet-close{display:none}.font-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.font-grid button,.size-row button{border:1px solid #ddd8ce;background:#faf9f6;border-radius:11px;padding:10px}.font-grid button.active,.size-row button.active{background:#eaf0e8;border-color:#8fa28e}.size-row{display:flex;gap:7px;flex-wrap:wrap}.size-row button{flex:1}.node .label{line-height:1.35}
+</style>
