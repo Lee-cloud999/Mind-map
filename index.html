@@ -59,7 +59,7 @@ path{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round}
 <body>
 <div class="app">
 <header>
- <div class="brand">생각가지 <span class="version">v2.10</span></div>
+ <div class="brand">생각가지 <span class="version">v2.11</span></div>
  <div class="head">
   <button id="newMap">새 맵</button>
   <button class="hide-sm" id="centerBtn">가운데로</button>
@@ -69,10 +69,10 @@ path{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round}
 <div class="workspace" id="ws">
  <div class="stage" id="stage"><svg id="lines"></svg></div>
  <div class="tip">+ → 새 가지 · 노드 선택 → 수정/이모지/이미지 · 빈 곳 드래그 → 이동 · 두 손가락 → 확대/축소</div>
- <div class="zoom-stack"><div class="zoom-controls"><button id="zoomOut" aria-label="축소">−</button><button id="zoomLabel">100%</button><button id="zoomIn" aria-label="확대">＋</button></div><div class="history-controls"><button id="undoBtn" title="실행취소" aria-label="실행취소">↶</button><button id="redoBtn" title="다시실행" aria-label="다시실행">↷</button></div></div>
+ <div class="zoom-stack"><div class="zoom-controls"><button id="zoomOut" aria-label="축소">−</button><button id="zoomLabel">100%</button><button id="zoomIn" aria-label="확대">＋</button></div><div class="history-controls"><button id="undoBtn" title="실행취소" aria-label="실행취소">←</button><button id="redoBtn" title="다시실행" aria-label="다시실행">→</button></div></div>
  <div class="toolbar context-hidden" id="toolbar">
   <button id="addChild">＋ 가지</button><button id="addSibling">＋ 형제</button>
-  <button id="editNode" title="수정" aria-label="수정">✎</button><button id="fontBtn" title="글자" aria-label="글자">Aa</button><button id="colorBtn" title="색상" aria-label="색상">●</button><button id="emojiBtn" title="이모지" aria-label="이모지">☺</button><button id="imageBtn" title="이미지" aria-label="이미지">▧</button><button id="multiBtn" title="다중선택" aria-label="다중선택">☑</button><button id="collapseBtn" title="접기/펼치기" aria-label="접기/펼치기">−</button><button id="duplicateBtn" title="복제" aria-label="복제">⧉</button><button id="deleteNodeBtn" title="삭제" aria-label="삭제">⌫</button>
+  <button id="editNode" title="수정" aria-label="수정">✎</button><button id="fontBtn" title="글자" aria-label="글자">Aa</button><button id="colorBtn" title="색상" aria-label="색상">●</button><button id="emojiBtn" title="이모지" aria-label="이모지">☺</button><button id="imageBtn" title="이미지" aria-label="이미지">▧</button><button id="multiBtn" title="다중선택" aria-label="다중선택">☑</button><button id="collapseBtn" title="접기/펼치기" aria-label="접기/펼치기">−</button><button id="duplicateBtn" title="복제" aria-label="복제">⧉</button><button id="deleteNodeBtn" title="삭제" aria-label="삭제">🗑</button>
  </div>
  <button class="fab" id="fab">＋</button>
 </div>
@@ -131,6 +131,7 @@ path{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round}
 const KEY='saenggakgaji-offline-v1', RECENT_KEY='saenggakgaji-recents-v1', COLORS=['#dfe8dc','#dfe7ee','#eee0df','#eee7cf','#e9e5ef'], PALETTE=['#dfe8dc','#dfe7ee','#eee0df','#eee7cf','#e9e5ef','#dce9e7','#f0ddd1','#e2e2e2','#cfe0d2','#d8d2e8','#f1d6dc','#d8e3f0'], LINE_PALETTE=['#9fb39b','#9eafc1','#c5a5a2','#c7b878','#afa6c2','#99b8b4','#caa28d','#a9a9a9','#91ad97','#9d92bb','#c997a3','#95abc3'];
 let data, selectedId='root', textMode='child', scale=1, tx=0, ty=0, drag=false, px=0,py=0, pendingImage=null, showCredits=true, pendingColor=COLORS[0], pendingLineColor='#b9c5b7', toolbarManual=false, positionLocked=false, multiMode=false, ctrlHeld=false, suppressClickId=null, suppressClickUntil=0;
 let selectedIds=new Set();
+let lastNodeTapId=null,lastNodeTapAt=0;
 let undoStack=[],redoStack=[],historyBusy=false,lastSnapshot='';
 let recents=(()=>{try{return JSON.parse(localStorage.getItem(RECENT_KEY))||{emojis:[],images:[]}}catch(e){return {emojis:[],images:[]}}})();
 function saveRecents(){try{localStorage.setItem(RECENT_KEY,JSON.stringify(recents))}catch(e){}}
@@ -163,6 +164,7 @@ function render(){
    (n.image&&n.credit&&showCredits&&n.showCredit!==false?`<div class="credit">${esc(n.credit)}</div>`:'')+(n.collapsed&&children(n.id).length?`<span class="collapsed-badge">+${descendants(n.id).length}</span>`:'');
   el.addEventListener('click',e=>{e.stopPropagation();if(suppressClickId===n.id&&Date.now()<suppressClickUntil){suppressClickId=null;return}let additive=multiMode||ctrlHeld||e.ctrlKey||e.metaKey;if(additive){if(selectedIds.has(n.id))selectedIds.delete(n.id);else selectedIds.add(n.id);if(selectedIds.size){selectedId=n.id}else selectedId='root'}else{selectedIds.clear();selectedId=n.id}toolbarManual=false;render()});bindTouchNode(el);
   el.addEventListener('dblclick',e=>{e.preventDefault();e.stopPropagation();selectedId=n.id;beginInlineEdit(n.id)});
+  el.addEventListener('pointerup',e=>{if(e.pointerType!=='touch'&&e.pointerType!=='pen')return;if(multiMode||ctrlHeld)return;let now=Date.now();if(lastNodeTapId===n.id&&now-lastNodeTapAt<420){e.preventDefault();e.stopPropagation();lastNodeTapId=null;lastNodeTapAt=0;suppressClickId=n.id;suppressClickUntil=now+900;selectedId=n.id;setTimeout(()=>beginInlineEdit(n.id),0)}else{lastNodeTapId=n.id;lastNodeTapAt=now}});
   stage.appendChild(el)
  });
  drawLines();
@@ -232,29 +234,47 @@ function openSheet(id){closeSheets();const target=$(id);if(target){target.classL
 function closeSheets(){document.querySelectorAll('.sheet').forEach(x=>x.classList.remove('open'));if(!$('toolbar').classList.contains('context-hidden')){toolbarManual=false;positionToolbar(true)}}
 document.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeSheets);ws.addEventListener('pointerdown',e=>{let outside=!e.target.closest('.sheet')&&!e.target.closest('.toolbar')&&!e.target.closest('.node');if(outside){closeSheets();selectedIds.clear();multiMode=false;$('toolbar').classList.add('context-hidden')}});
 let inlineEdit=null;
-function beginInlineEdit(id){
+function beginInlineEdit(id,opts={}){
  const n=node(id);if(!n)return;
- closeSheets();selectedIds.clear();selectedId=id;render();
+ closeSheets();selectedIds.clear();selectedId=id;toolbarManual=false;render();
  requestAnimationFrame(()=>{
   const el=stage.querySelector('.node[data-id="'+CSS.escape(id)+'"]'),lab=el&&el.querySelector('.label');if(!lab)return;
-  const original=n.text;inlineEdit={id,original};
+  const original=n.text, created=!!opts.created;inlineEdit={id,original,created};
   lab.classList.add('inline-edit');lab.contentEditable='true';lab.setAttribute('role','textbox');lab.setAttribute('aria-multiline','true');
+  if(created)lab.innerText='';
   lab.focus();
   const sel=window.getSelection(),range=document.createRange();range.selectNodeContents(lab);range.collapse(false);sel.removeAllRanges();sel.addRange(range);
-  const finish=(saveIt=true)=>{if(!inlineEdit||inlineEdit.id!==id)return;let text=lab.innerText.replace(/\r/g,'').replace(/\n{3,}/g,'\n\n').trim();inlineEdit=null;if(saveIt&&text)n.text=text;else if(!saveIt)n.text=original;save();render()};
-  lab.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();finish(true)}else if(e.key==='Escape'){e.preventDefault();finish(false)}else if(e.key==='Enter'&&e.shiftKey){e.stopPropagation()} });
+  let ro=null,done=false;
+  const follow=()=>{toolbarManual=false;positionToolbar(true);drawLines()};
+  if(window.ResizeObserver){ro=new ResizeObserver(follow);ro.observe(el)}
+  lab.addEventListener('input',follow);
+  const finish=(saveIt=true)=>{if(done||!inlineEdit||inlineEdit.id!==id)return;done=true;if(ro)ro.disconnect();let text=lab.innerText.replace(/\r/g,'').replace(/\n{3,}/g,'\n\n').trim();inlineEdit=null;
+    if(saveIt&&text){n.text=text;save();render()}
+    else if(created&&!text){data.nodes=data.nodes.filter(x=>x.id!==id);selectedId=n.parent||'root';save();render()}
+    else if(!saveIt){if(created){data.nodes=data.nodes.filter(x=>x.id!==id);selectedId=n.parent||'root'}else n.text=original;save();render()}
+    else {n.text=original;render()}
+  };
+  lab.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();finish(true)}else if(e.key==='Escape'){e.preventDefault();finish(false)}else if(e.key==='Enter'&&e.shiftKey){setTimeout(follow,0)}});
   lab.addEventListener('blur',()=>finish(true),{once:true});
   lab.addEventListener('pointerdown',e=>e.stopPropagation());lab.addEventListener('click',e=>e.stopPropagation());
+  follow();
  });
+}
+function createInlineNode(mode){
+ let cur=node(selectedId);if(!cur)return;
+ let parent=mode==='sibling'?(cur.parent||cur.id):cur.id,p=node(parent);if(!p)return;
+ let kids=children(parent),id='n'+Date.now()+Math.random().toString(36).slice(2,6),side=p.x<1100?-1:1;if(p.root)side=(kids.length%2===0?1:-1);
+ let x=p.x+side*300,y=p.y+(kids.length-Math.floor(kids.length/2))*115;
+ let nn={id,parent,text:'새 가지',x,y,color:COLORS[kids.length%COLORS.length],emoji:'',image:null,credit:'',showCredit:true};data.nodes.push(nn);resolveCollision(nn);selectedId=id;save();render();setTimeout(()=>beginInlineEdit(id,{created:true}),30);
 }
 function openText(mode){$('imageSheet').classList.remove('open');textMode=mode;let n=node(selectedId);$('textTitle').textContent=mode==='edit'?'노드 수정':mode==='sibling'?'형제 가지 추가':'하위 가지 추가';$('textInput').value=mode==='edit'&&n?n.text:'';openSheet('textSheet');positionTextSheet();setTimeout(()=>$('textInput').focus(),80)}
 function positionTextSheet(){let n=node(selectedId),sh=$('textSheet');if(!n)return;requestAnimationFrame(()=>{let el=stage.querySelector('.node[data-id="'+CSS.escape(n.id)+'"]');if(!el)return;let r=el.getBoundingClientRect(),wr=ws.getBoundingClientRect(),x=r.left-wr.left+r.width/2,y=r.bottom-wr.top+16;x=Math.max(210,Math.min(ws.clientWidth-210,x));if(y+70>ws.clientHeight)y=Math.max(12,r.top-wr.top-70);sh.style.left=x+'px';sh.style.top=y+'px';let tb=$('toolbar');tb.classList.remove('context-hidden');toolbarManual=false;requestAnimationFrame(()=>{let sr=sh.getBoundingClientRect(),tw=tb.offsetWidth||520,th=tb.offsetHeight||52,txx=sr.left-wr.left+sr.width/2,tyy=sr.bottom-wr.top+14;if(tyy+th>ws.clientHeight-10)tyy=Math.max(10,sr.top-wr.top-th-14);txx=Math.max(tw/2+12,Math.min(ws.clientWidth-tw/2-12,txx));tb.style.left=txx+'px';tb.style.top=tyy+'px'})})}
-$('addChild').onclick=()=>openText('child');
+$('addChild').onclick=()=>createInlineNode('child');
 $('fab').onclick=()=>{
  if(!node(selectedId)) selectedId='root';
- openText('child');
+ createInlineNode('child');
 };
-$('addSibling').onclick=()=>openText('sibling');$('editNode').onclick=()=>beginInlineEdit(selectedId);
+$('addSibling').onclick=()=>createInlineNode('sibling');$('editNode').onclick=()=>beginInlineEdit(selectedId);
 function commitText(){
  let t=$('textInput').value.trim();if(!t)return;let cur=node(selectedId);if(!cur)return;if(textMode==='edit'){cur.text=t}
  else{let parent=textMode==='sibling'?(cur.parent||cur.id):cur.id;let p=node(parent),kids=children(parent);let id='n'+Date.now();
@@ -357,7 +377,7 @@ render();
 
 // v2.2: register the versioned service worker so GitHub Pages refreshes cached app files.
 if('serviceWorker' in navigator){
- window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=2.9').then(r=>r.update()).catch(()=>{}));
+ window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=2.11').then(r=>r.update()).catch(()=>{}));
 }
 </script>
 </body></html>
