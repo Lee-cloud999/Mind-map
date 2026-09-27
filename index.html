@@ -58,7 +58,7 @@ path{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round}
 <body>
 <div class="app">
 <header>
- <div class="brand">생각가지 <span class="version">v2.7</span></div>
+ <div class="brand">생각가지 <span class="version">v2.8</span></div>
  <div class="head">
   <button id="newMap">새 맵</button>
   <button class="hide-sm" id="centerBtn">가운데로</button>
@@ -70,7 +70,7 @@ path{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round}
  <div class="tip">+ → 새 가지 · 노드 선택 → 수정/이모지/이미지 · 빈 곳 드래그 → 이동 · 두 손가락 → 확대/축소</div>
  <div class="zoom-controls"><button id="zoomOut" aria-label="축소">−</button><button id="zoomLabel">100%</button><button id="zoomIn" aria-label="확대">＋</button></div>
  <div class="toolbar context-hidden" id="toolbar">
-  <button id="undoBtn" class="mini-action" title="실행취소">↶</button><button id="redoBtn" class="mini-action" title="다시실행">↷</button><button id="addChild">＋ 가지</button><button id="addSibling">＋ 형제</button>
+  <button id="undoBtn" class="mini-action" title="실행취소">↶ 실행취소</button><button id="redoBtn" class="mini-action" title="다시실행">↷ 다시실행</button><button id="addChild">＋ 가지</button><button id="addSibling">＋ 형제</button>
   <button id="multiBtn">☑ 다중선택</button><button id="editNode">✎ 수정</button><button id="fontBtn">Aa 글자</button><button id="colorBtn">● 색상</button><button id="emojiBtn">☺ 이모지</button><button id="imageBtn">▧ 이미지</button><button id="collapseBtn">− 접기</button><button id="duplicateBtn">⧉ 복제</button><button id="deleteNodeBtn">⌫ 삭제</button>
  </div>
  <button class="fab" id="fab">＋</button>
@@ -128,7 +128,7 @@ path{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round}
 <input type="file" id="backupInput" accept=".json,application/json" class="hidden"><input type="file" id="mapInput" accept=".sgj,.json,.mindmap.json,application/json" class="hidden">
 <script>
 const KEY='saenggakgaji-offline-v1', RECENT_KEY='saenggakgaji-recents-v1', COLORS=['#dfe8dc','#dfe7ee','#eee0df','#eee7cf','#e9e5ef'], PALETTE=['#dfe8dc','#dfe7ee','#eee0df','#eee7cf','#e9e5ef','#dce9e7','#f0ddd1','#e2e2e2','#cfe0d2','#d8d2e8','#f1d6dc','#d8e3f0'], LINE_PALETTE=['#9fb39b','#9eafc1','#c5a5a2','#c7b878','#afa6c2','#99b8b4','#caa28d','#a9a9a9','#91ad97','#9d92bb','#c997a3','#95abc3'];
-let data, selectedId='root', textMode='child', scale=1, tx=0, ty=0, drag=false, px=0,py=0, pendingImage=null, showCredits=true, pendingColor=COLORS[0], pendingLineColor='#b9c5b7', toolbarManual=false, positionLocked=false, multiMode=false;
+let data, selectedId='root', textMode='child', scale=1, tx=0, ty=0, drag=false, px=0,py=0, pendingImage=null, showCredits=true, pendingColor=COLORS[0], pendingLineColor='#b9c5b7', toolbarManual=false, positionLocked=false, multiMode=false, ctrlHeld=false, suppressClickId=null, suppressClickUntil=0;
 let selectedIds=new Set();
 let undoStack=[],redoStack=[],historyBusy=false,lastSnapshot='';
 let recents=(()=>{try{return JSON.parse(localStorage.getItem(RECENT_KEY))||{emojis:[],images:[]}}catch(e){return {emojis:[],images:[]}}})();
@@ -160,7 +160,7 @@ function render(){
   el.innerHTML=(n.image?`<img src="${n.image}">`:'')+(n.emoji?`<div class="emoji">${esc(n.emoji)}</div>`:'')+
    `<div class="label">${esc(n.text)}</div>`+
    (n.image&&n.credit&&showCredits&&n.showCredit!==false?`<div class="credit">${esc(n.credit)}</div>`:'')+(n.collapsed&&children(n.id).length?`<span class="collapsed-badge">+${descendants(n.id).length}</span>`:'');
-  el.addEventListener('click',e=>{e.stopPropagation();let additive=multiMode||e.ctrlKey||e.metaKey;if(additive){if(selectedIds.has(n.id))selectedIds.delete(n.id);else selectedIds.add(n.id);if(selectedIds.size){selectedId=n.id}else selectedId='root'}else{selectedIds.clear();selectedId=n.id}toolbarManual=false;render()});bindTouchNode(el);
+  el.addEventListener('click',e=>{e.stopPropagation();if(suppressClickId===n.id&&Date.now()<suppressClickUntil){suppressClickId=null;return}let additive=multiMode||ctrlHeld||e.ctrlKey||e.metaKey;if(additive){if(selectedIds.has(n.id))selectedIds.delete(n.id);else selectedIds.add(n.id);if(selectedIds.size){selectedId=n.id}else selectedId='root'}else{selectedIds.clear();selectedId=n.id}toolbarManual=false;render()});bindTouchNode(el);
   el.addEventListener('dblclick',e=>{e.stopPropagation();selectedId=n.id;openText('edit')});
   stage.appendChild(el)
  });
@@ -173,7 +173,7 @@ function render(){
 }
 
 function depthOf(id){let d=0,n=node(id);while(n&&n.parent){d++;n=node(n.parent)}return d}
-function defaultFontSize(id){let d=depthOf(id);return d===0?40:d===1?36:d===2?28:22}
+function defaultFontSize(id){let d=depthOf(id);return d===0?36:d===1?28:d===2?22:18}
 function positionToolbar(force=false){let n=node(selectedId),tb=$('toolbar');if(!n||(!force&&toolbarManual))return;requestAnimationFrame(()=>{let el=stage.querySelector('.node[data-id="'+CSS.escape(n.id)+'"]');if(!el)return;let r=el.getBoundingClientRect(),wr=ws.getBoundingClientRect(),tw=tb.offsetWidth||520,th=tb.offsetHeight||52,gap=18;let x=r.left-wr.left+r.width/2,y=r.bottom-wr.top+gap;if(y+th>ws.clientHeight-12)y=Math.max(12,r.top-wr.top-th-gap);x=Math.max(tw/2+12,Math.min(ws.clientWidth-tw/2-12,x));tb.style.left=x+'px';tb.style.top=y+'px'})}
 function drawLines(){
  let s='',hidden=hiddenIds();data.nodes.filter(n=>n.parent&&!hidden.has(n.id)).forEach(n=>{let p=node(n.parent);if(!p)return;
@@ -188,22 +188,23 @@ function nodeDown(e){
  render();
 }
 function bindTouchNode(el){
- let startX=0,startY=0,baseX=0,baseY=0,moving=false,id=el.dataset.id;
+ let startX=0,startY=0,baseX=0,baseY=0,moving=false,id=el.dataset.id,touchAdditive=false;
  el.addEventListener('touchstart',function(e){
    if(e.touches.length!==1)return;
-   const n=node(id); if(!n||positionLocked)return;
-   selectedId=id; startX=e.touches[0].clientX; startY=e.touches[0].clientY;
-   baseX=n.x;baseY=n.y;moving=false;
+   const n=node(id); if(!n)return;
+   touchAdditive=multiMode||ctrlHeld;
+   startX=e.touches[0].clientX; startY=e.touches[0].clientY;baseX=n.x;baseY=n.y;moving=false;
+   if(!touchAdditive&&!positionLocked)selectedId=id;
  },{passive:true});
  el.addEventListener('touchmove',function(e){
-   if(e.touches.length!==1||positionLocked)return;
+   if(e.touches.length!==1||positionLocked||touchAdditive)return;
    const dx=(e.touches[0].clientX-startX)/scale,dy=(e.touches[0].clientY-startY)/scale;
-   if(Math.abs(dx)+Math.abs(dy)>8){
-     moving=true;e.preventDefault();
-     const n=node(id);n.x=baseX+dx;n.y=baseY+dy;render();
-   }
+   if(Math.abs(dx)+Math.abs(dy)>8){moving=true;e.preventDefault();const n=node(id);n.x=baseX+dx;n.y=baseY+dy;render()}
  },{passive:false});
- el.addEventListener('touchend',function(){if(moving){resolveCollision(node(id));save();render()}},{passive:true});
+ el.addEventListener('touchend',function(e){
+   if(moving){resolveCollision(node(id));save();render();return}
+   if(touchAdditive){e.preventDefault();e.stopPropagation();if(selectedIds.has(id))selectedIds.delete(id);else selectedIds.add(id);selectedId=selectedIds.size?id:'root';toolbarManual=false;suppressClickId=id;suppressClickUntil=Date.now()+700;render()}
+ },{passive:false});
 }
 function apply(){stage.style.transform=`translate(${tx}px,${ty}px) scale(${scale})`;let z=$('zoomLabel');if(z)z.textContent=Math.round(scale*100)+'%'}
 function setZoom(next,cx=ws.clientWidth/2,cy=ws.clientHeight/2){let old=scale;next=Math.max(.25,Math.min(2.2,next));if(Math.abs(next-old)<.001)return;let wx=(cx-tx)/old,wy=(cy-ty)/old;scale=next;tx=cx-wx*scale;ty=cy-wy*scale;apply()}
@@ -316,6 +317,10 @@ $('toggleCredits').onclick=()=>{showCredits=!showCredits;save();render();$('menu
 $('centerBtn').onclick=$('fitBtn').onclick=()=>{center();$('menu').classList.remove('open')};
 function deleteSelectedNode(){let roots=selectedIds.size?[...selectedIds]:[selectedId];roots=roots.filter(id=>{let n=node(id);return n&&!n.root});if(!roots.length)return;let ids=new Set(roots),changed=true;while(changed){changed=false;data.nodes.forEach(x=>{if(x.parent&&ids.has(x.parent)&&!ids.has(x.id)){ids.add(x.id);changed=true}})}let fallback=node(roots[0])?.parent||'root';data.nodes=data.nodes.filter(x=>!ids.has(x.id));selectedIds.clear();multiMode=false;selectedId=node(fallback)?fallback:'root';save();render();$('menu').classList.remove('open')}
 $('deleteBtn').onclick=deleteSelectedNode;$('deleteNodeBtn').onclick=deleteSelectedNode;
+document.addEventListener('keydown',e=>{if(e.key==='Control')ctrlHeld=true});
+document.addEventListener('keyup',e=>{if(e.key==='Control')ctrlHeld=false});
+window.addEventListener('blur',()=>{ctrlHeld=false});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)ctrlHeld=false});
 document.addEventListener('keydown',e=>{if(e.key!=='Delete'&&e.key!=='Backspace')return;let t=e.target;if(t&&(t.matches('input,textarea')||t.isContentEditable))return;if(selectedIds.size||selectedId!=='root'){e.preventDefault();deleteSelectedNode()}});
 $('newMap').onclick=()=>{if(confirm('새 마인드맵을 시작할까요? 현재 맵은 지워집니다.')){data=fresh();showCredits=true;selectedId='root';save();render();center()}};
 function validMap(o){return o&&Array.isArray(o.nodes)&&o.nodes.every(n=>n&&typeof n.id==='string'&&typeof n.text==='string')}
@@ -329,7 +334,7 @@ render();
 
 // v2.2: register the versioned service worker so GitHub Pages refreshes cached app files.
 if('serviceWorker' in navigator){
- window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=2.7').then(r=>r.update()).catch(()=>{}));
+ window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=2.8').then(r=>r.update()).catch(()=>{}));
 }
 </script>
 </body></html>
