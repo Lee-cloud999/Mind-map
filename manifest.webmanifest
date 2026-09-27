@@ -1,0 +1,10 @@
+{
+  "name": "생각가지",
+  "short_name": "생각가지",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f4ee",
+  "theme_color": "#58715f",
+  "description": "생각을 가지처럼 펼치는 마인드맵"
+}
