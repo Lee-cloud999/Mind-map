@@ -4,6 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <title>생각가지 · 오프라인 마인드맵</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fonts-archive/MaruBuri/subsets/MaruBuri-dynamic-subset.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kingyong9169/NanumSquareRound/NanumSquareRound.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700&display=swap">
+<style>@font-face{font-family:"nanumBarunPen";font-weight:400;font-style:normal;font-display:swap;src:url("https://cdn.jsdelivr.net/gh/wefonts/nanumBarunPen/nanumBarunPen-Regular.woff2") format("woff2")}</style>
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{--bg:#f6f4ee;--paper:#fffefa;--ink:#30352f;--muted:#858b82;--green:#58715f;--line:#b9c5b7;--sage:#dfe8dc;--blue:#dfe7ee;--rose:#eee0df;--gold:#eee7cf;--lav:#e9e5ef}
@@ -21,7 +26,7 @@ path{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round}
 .node.root{background:var(--green);color:white;font-weight:700;width:200px}
 .node.selected{outline:3px solid rgba(88,113,95,.22);border-color:var(--green)}
 .node .emoji{font-size:24px;line-height:1.1;margin-bottom:4px}
-.node img{display:block;width:100%;height:88px;object-fit:cover;border-radius:11px;margin:0 0 7px}
+.node img{display:block;width:100%;aspect-ratio:1/1;height:auto;object-fit:cover;border-radius:11px;margin:0 0 7px}
 .node .credit{font-size:9px;color:#7f857d;margin-top:5px;line-height:1.25}.node.root .credit{color:#dce5df}
 .node .label{word-break:break-word}
 .tip{position:absolute;top:12px;left:12px;background:rgba(255,255,255,.9);border:1px solid #e3dfd5;border-radius:11px;padding:8px 10px;color:#777;font-size:11px;pointer-events:none}
@@ -41,12 +46,15 @@ path{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round}
 .palette{display:grid;grid-template-columns:repeat(6,1fr);gap:9px;margin:10px 0}.swatch{height:42px;border:2px solid transparent;border-radius:12px}.swatch.active{border-color:#4f5f52;outline:2px solid #d8ded7}.sectionlabel{font-size:12px;color:#777;margin:12px 0 6px}.recent-images{display:flex;gap:8px;overflow-x:auto;padding:4px 0 8px}.recent-images button{flex:0 0 78px;height:62px;padding:0;border:2px solid transparent;border-radius:10px;overflow:hidden;background:#eee}.recent-images img{width:100%;height:100%;object-fit:cover}.hidden{display:none!important}
 @media(max-width:600px){.brand{font-size:18px}.head .hide-sm{display:none}.toolbar{width:calc(100% - 24px);justify-content:space-around}.toolbar button{font-size:12px;padding:9px 6px}.emoji-grid{grid-template-columns:repeat(7,1fr)}}
 .toolbar button,.fab,header,header button,.sheet,.sheet button,.sheet input,.menu,.menu button{touch-action:manipulation}.toolbar{touch-action:none}
+
+#textSheet{position:absolute;left:50%;top:88px;bottom:auto;width:min(390px,calc(100% - 28px));transform:translateX(-50%);border-radius:16px;padding:10px 12px;box-shadow:0 10px 30px rgba(0,0,0,.16);overflow:visible}#textSheet h3,#textSheet .sheet-close{display:none}.font-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.font-grid button,.size-row button{border:1px solid #ddd8ce;background:#faf9f6;border-radius:11px;padding:10px 6px;min-height:44px;font-size:13px}.font-grid button.active,.size-row button.active{background:#eaf0e8;border-color:#8fa28e}.size-row{display:flex;gap:7px;flex-wrap:wrap}.size-row button{flex:1}.node .label{line-height:1.35}
+.zoom-controls{position:absolute;right:14px;top:14px;z-index:7;display:flex;align-items:center;background:rgba(255,255,255,.96);border:1px solid #dedad0;border-radius:13px;box-shadow:0 5px 16px rgba(50,50,45,.1);overflow:hidden}.zoom-controls button{border:0;background:transparent;min-width:42px;height:40px;padding:0 8px;color:#555;font-weight:700}.zoom-controls #zoomLabel{min-width:58px;font-size:12px;font-weight:600;border-left:1px solid #eee9df;border-right:1px solid #eee9df}.zoom-controls button:active{background:#eee}
 </style>
 </head>
 <body>
 <div class="app">
 <header>
- <div class="brand">생각가지 <span class="version">v2.2</span></div>
+ <div class="brand">생각가지 <span class="version">v2.3</span></div>
  <div class="head">
   <button id="newMap">새 맵</button>
   <button class="hide-sm" id="centerBtn">가운데로</button>
@@ -55,7 +63,8 @@ path{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round}
 </header>
 <div class="workspace" id="ws">
  <div class="stage" id="stage"><svg id="lines"></svg></div>
- <div class="tip">+ → 새 가지 · 노드 선택 → 수정/이모지/이미지 · 빈 곳 드래그 → 화면 이동</div>
+ <div class="tip">+ → 새 가지 · 노드 선택 → 수정/이모지/이미지 · 빈 곳 드래그 → 이동 · 두 손가락 → 확대/축소</div>
+ <div class="zoom-controls"><button id="zoomOut" aria-label="축소">−</button><button id="zoomLabel">100%</button><button id="zoomIn" aria-label="확대">＋</button></div>
  <div class="toolbar context-hidden" id="toolbar">
   <button id="addChild">＋ 가지</button><button id="addSibling">＋ 형제</button>
   <button id="editNode">✎ 수정</button><button id="fontBtn">Aa 글자</button><button id="colorBtn">● 색상</button><button id="emojiBtn">☺ 이모지</button><button id="imageBtn">▧ 이미지</button>
@@ -158,7 +167,7 @@ function drawLines(){
  let s='';data.nodes.filter(n=>n.parent).forEach(n=>{let p=node(n.parent);if(!p)return;
  let pe=stage.querySelector('.node[data-id="'+CSS.escape(p.id)+'"]'),ne=stage.querySelector('.node[data-id="'+CSS.escape(n.id)+'"]');let pw=pe?pe.offsetWidth:(p.root?200:170),ph=pe?pe.offsetHeight:70,nw=ne?ne.offsetWidth:(n.root?200:170),nh=ne?ne.offsetHeight:70;
  let x1=p.x+pw/2,y1=p.y+ph/2,x2=n.x+nw/2,y2=n.y+nh/2,mid=(x1+x2)/2;
- let stroke=n.lineColor||n.branchColor||'#b9c5b7';s+=`<path d="M${x1} ${y1} C${mid} ${y1},${mid} ${y2},${x2} ${y2}" stroke="${stroke}"/>`});$('lines').innerHTML=s
+ let stroke=n.lineColor||n.branchColor||'#b9c5b7';s+=`<path d="M${x1} ${y1} C${mid} ${y1},${mid} ${y2},${x2} ${y2}" style="stroke:${stroke}"/>`});$('lines').innerHTML=s
 }
 let nd=null,nox=0,noy=0,moved=false;
 function nodeDown(e){
@@ -184,7 +193,8 @@ function bindTouchNode(el){
  },{passive:false});
  el.addEventListener('touchend',function(){if(moving)save()},{passive:true});
 }
-function apply(){stage.style.transform=`translate(${tx}px,${ty}px) scale(${scale})`}
+function apply(){stage.style.transform=`translate(${tx}px,${ty}px) scale(${scale})`;let z=$('zoomLabel');if(z)z.textContent=Math.round(scale*100)+'%'}
+function setZoom(next,cx=ws.clientWidth/2,cy=ws.clientHeight/2){let old=scale;next=Math.max(.25,Math.min(2.2,next));if(Math.abs(next-old)<.001)return;let wx=(cx-tx)/old,wy=(cy-ty)/old;scale=next;tx=cx-wx*scale;ty=cy-wy*scale;apply()}
 function center(){scale=Math.min(.9,Math.max(.42,ws.clientWidth/1200));let r=node('root')||data.nodes[0];tx=ws.clientWidth/2-(r.x+100)*scale;ty=ws.clientHeight/2-(r.y+40)*scale;apply()}
 setTimeout(center,30);addEventListener('resize',center);
 function isCanvasBlankTarget(t){return t===ws||t===stage||t===$('lines')}
@@ -196,7 +206,11 @@ ws.addEventListener('pointerdown',e=>{
 ws.addEventListener('pointermove',e=>{if(!drag)return;e.preventDefault();tx=e.clientX-px;ty=e.clientY-py;apply()});
 function stopPan(e){drag=false;try{ws.releasePointerCapture(e.pointerId)}catch(_){}}
 ws.addEventListener('pointerup',stopPan);ws.addEventListener('pointercancel',stopPan);
-ws.addEventListener('wheel',e=>{e.preventDefault();scale=Math.max(.3,Math.min(1.8,scale*(e.deltaY>0?.9:1.1)));apply()},{passive:false});
+ws.addEventListener('wheel',e=>{e.preventDefault();setZoom(scale*(e.deltaY>0?.9:1.1),e.clientX,e.clientY)},{passive:false});
+$('zoomIn').onclick=()=>setZoom(scale*1.15);$('zoomOut').onclick=()=>setZoom(scale/1.15);$('zoomLabel').onclick=()=>center();
+let pinch=null;ws.addEventListener('touchstart',e=>{if(e.touches.length===2){let a=e.touches[0],b=e.touches[1];pinch={dist:Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY),scale,cx:(a.clientX+b.clientX)/2,cy:(a.clientY+b.clientY)/2,tx,ty};drag=false}}, {passive:true});
+ws.addEventListener('touchmove',e=>{if(e.touches.length===2&&pinch){e.preventDefault();let a=e.touches[0],b=e.touches[1],d=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY),cx=(a.clientX+b.clientX)/2,cy=(a.clientY+b.clientY)/2;let old=scale,newScale=Math.max(.25,Math.min(2.2,pinch.scale*d/pinch.dist));let wx=(pinch.cx-pinch.tx)/pinch.scale,wy=(pinch.cy-pinch.ty)/pinch.scale;scale=newScale;tx=cx-wx*scale;ty=cy-wy*scale;apply()}},{passive:false});
+ws.addEventListener('touchend',e=>{if(e.touches.length<2)pinch=null},{passive:true});
 
 function openSheet(id){closeSheets();const target=$(id);if(target){target.classList.add('open')}}
 function closeSheets(){document.querySelectorAll('.sheet').forEach(x=>x.classList.remove('open'));if(!$('toolbar').classList.contains('context-hidden')){toolbarManual=false;positionToolbar(true)}}
@@ -224,11 +238,11 @@ function bindPalette(id,key){let box=$(id),val=key==='node'?pendingColor:pending
 function renderPalettes(){bindPalette('colorPalette','node');bindPalette('linePalette','line')}
 $('colorBtn').onclick=()=>{let n=node(selectedId);if(!n)return;pendingColor=n.color||(n.root?'#58715f':COLORS[0]);pendingLineColor=n.root?(children(n.id)[0]?.lineColor||'#b9c5b7'):(n.lineColor||n.branchColor||'#b9c5b7');renderPalettes();openSheet('colorSheet')};
 $('colorSave').onclick=()=>{let n=node(selectedId);if(!n)return;let desc=$('applyDesc').checked?descendants(n.id):[];n.color=pendingColor;if(n.root){if($('applyDesc').checked)desc.forEach(x=>x.color=pendingColor);children(n.id).forEach(x=>x.lineColor=pendingLineColor);if($('applyDesc').checked)desc.forEach(x=>x.lineColor=pendingLineColor)}else{n.lineColor=pendingLineColor;if($('applyDesc').checked)desc.forEach(x=>{x.color=pendingColor;x.lineColor=pendingLineColor})}save();render();closeSheets()};
-function autoArrange(doCenter=true){let root=node('root');if(!root)return;root.x=1100;root.y=760;let first=children(root.id),left=[],right=[];first.forEach((n,i)=>(i%2?left:right).push(n));const h=n=>n.image?190:Math.max(82,58+(String(n.text||'').length>18?28:0));function span(n){let ks=children(n.id);if(!ks.length)return h(n)+42;return Math.max(h(n)+42,ks.reduce((a,c)=>a+span(c),0))}function layoutChildren(p,side){let ks=children(p.id);if(!ks.length)return;let total=ks.reduce((a,c)=>a+span(c),0),cursor=p.y-total/2;ks.forEach(c=>{let sp=span(c);c.x=p.x+side*300;c.y=cursor+sp/2-h(c)/2;cursor+=sp;layoutChildren(c,side)})}function group(g,side){let total=g.reduce((a,c)=>a+span(c),0),cursor=root.y-total/2;g.forEach(c=>{let sp=span(c);c.x=root.x+side*380;c.y=cursor+sp/2-h(c)/2;cursor+=sp;layoutChildren(c,side)})}group(right,1);group(left,-1);save();render();if(doCenter)center()}
+function autoArrange(doCenter=true){let root=node('root');if(!root)return;root.x=1100;root.y=760;let first=children(root.id),left=[],right=[];first.forEach((n,i)=>(i%2?left:right).push(n));const h=n=>n.image?(n.root?270:240):Math.max(82,58+(String(n.text||'').length>18?28:0));function span(n){let ks=children(n.id);if(!ks.length)return h(n)+42;return Math.max(h(n)+42,ks.reduce((a,c)=>a+span(c),0))}function layoutChildren(p,side){let ks=children(p.id);if(!ks.length)return;let total=ks.reduce((a,c)=>a+span(c),0),cursor=p.y-total/2;ks.forEach(c=>{let sp=span(c);c.x=p.x+side*300;c.y=cursor+sp/2-h(c)/2;cursor+=sp;layoutChildren(c,side)})}function group(g,side){let total=g.reduce((a,c)=>a+span(c),0),cursor=root.y-total/2;g.forEach(c=>{let sp=span(c);c.x=root.x+side*380;c.y=cursor+sp/2-h(c)/2;cursor+=sp;layoutChildren(c,side)})}group(right,1);group(left,-1);save();render();if(doCenter)center()}
 $('autoArrangeBtn').onclick=()=>{autoArrange();$('menu').classList.remove('open')};
 
 
-const FONTS=[['기본 고딕','-apple-system,BlinkMacSystemFont,Apple SD Gothic Neo,Noto Sans KR,sans-serif'],['명조','Georgia,Noto Serif KR,serif'],['마루부리','MaruBuri,Noto Serif KR,serif'],['손글씨','Nanum Pen Script,Apple SD Gothic Neo,cursive']];let pendingFont='',pendingSize=16;
+const FONTS=[['기본','-apple-system,BlinkMacSystemFont,Apple SD Gothic Neo,sans-serif'],['Pretendard','Pretendard,-apple-system,BlinkMacSystemFont,sans-serif'],['마루부리','Maru Buri,serif'],['나눔스퀘어라운드','Nanum Square Round,sans-serif'],['나눔명조','Nanum Myeongjo,serif'],['나눔바른펜','nanumBarunPen,cursive']];let pendingFont='',pendingSize=16;
 function renderFontControls(){let n=node(selectedId);if(!n)return;pendingFont=n.fontFamily||FONTS[0][1];pendingSize=n.fontSize||defaultFontSize(n.id);$('fontGrid').innerHTML=FONTS.map(([a,f])=>`<button type="button" data-f="${f}" class="${pendingFont===f?'active':''}">${a}</button>`).join('');$('fontGrid').querySelectorAll('button').forEach(b=>b.addEventListener('pointerup',e=>{e.preventDefault();pendingFont=b.dataset.f;n.fontFamily=pendingFont;save();render();renderFontControls()}));$('sizeRow').innerHTML=[12,14,16,18,20,22,24,28].map(z=>`<button type="button" data-z="${z}" class="${pendingSize===z?'active':''}">${z}</button>`).join('');$('sizeRow').querySelectorAll('button').forEach(b=>b.addEventListener('pointerup',e=>{e.preventDefault();pendingSize=+b.dataset.z;n.fontSize=pendingSize;save();render();renderFontControls()}))}
 $('fontBtn').onclick=()=>{renderFontControls();openSheet('fontSheet')};$('fontSave').onclick=()=>{let n=node(selectedId);if(!n)return;let targets=[n];if($('fontDesc').checked)targets.push(...descendants(n.id));targets.forEach((x,i)=>{x.fontFamily=pendingFont;x.fontSize=i===0?pendingSize:Math.max(12,pendingSize-depthOf(x.id)*2+depthOf(n.id)*2)});save();render();closeSheets()};
 
@@ -277,10 +291,7 @@ render();
 
 // v2.2: register the versioned service worker so GitHub Pages refreshes cached app files.
 if('serviceWorker' in navigator){
- window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=2.2').then(r=>r.update()).catch(()=>{}));
+ window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=2.3').then(r=>r.update()).catch(()=>{}));
 }
 </script>
 </body></html>
-<style>
-#textSheet{position:absolute;left:50%;top:88px;bottom:auto;width:min(390px,calc(100% - 28px));transform:translateX(-50%);border-radius:16px;padding:10px 12px;box-shadow:0 10px 30px rgba(0,0,0,.16);overflow:visible}#textSheet h3,#textSheet .sheet-close{display:none}.font-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.font-grid button,.size-row button{border:1px solid #ddd8ce;background:#faf9f6;border-radius:11px;padding:10px}.font-grid button.active,.size-row button.active{background:#eaf0e8;border-color:#8fa28e}.size-row{display:flex;gap:7px;flex-wrap:wrap}.size-row button{flex:1}.node .label{line-height:1.35}
-</style>
