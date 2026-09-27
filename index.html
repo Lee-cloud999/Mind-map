@@ -30,8 +30,8 @@ path{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round}
 .node .credit{font-size:9px;color:#7f857d;margin-top:5px;line-height:1.25}.node.root .credit{color:#dce5df}
 .node .label{white-space:pre-wrap;word-break:keep-all;overflow-wrap:break-word}
 .tip{position:absolute;top:12px;left:12px;background:rgba(255,255,255,.9);border:1px solid #e3dfd5;border-radius:11px;padding:8px 10px;color:#777;font-size:11px;pointer-events:none}
-.toolbar{position:absolute;cursor:grab;left:50%;top:90px;display:flex;gap:3px;padding:6px;background:rgba(255,255,255,.97);border:1px solid #dedad0;border-radius:16px;box-shadow:0 7px 22px rgba(50,50,45,.14);z-index:8;transform:translateX(-50%);max-width:calc(100% - 24px);overflow-x:auto}
-.toolbar.dragging{cursor:grabbing}.toolbar.context-hidden{display:none}.toolbar button{border:0;background:transparent;border-radius:10px;padding:9px 10px;color:#555d55;white-space:nowrap}.toolbar button:active{background:#eee}
+.toolbar{position:absolute;cursor:grab;left:50%;top:90px;display:flex;gap:1px;padding:4px;background:rgba(255,255,255,.97);border:1px solid #dedad0;border-radius:16px;box-shadow:0 7px 22px rgba(50,50,45,.14);z-index:8;transform:translateX(-50%);max-width:calc(100% - 24px);overflow-x:auto}
+.toolbar.dragging{cursor:grabbing}.toolbar.context-hidden{display:none}.toolbar button{border:0;background:transparent;border-radius:9px;padding:7px 7px;color:#555d55;white-space:nowrap}.toolbar button:active{background:#eee}
 .fab{position:absolute;right:15px;bottom:76px;width:54px;height:54px;border:0;border-radius:50%;background:var(--green);color:#fff;font-size:28px;box-shadow:0 7px 20px rgba(50,70,55,.25);z-index:4}
 .sheet{display:none;position:absolute;z-index:20;left:50%;bottom:0;width:min(560px,100%);height:auto;max-height:min(68vh,560px);overflow-y:auto;-webkit-overflow-scrolling:touch;transform:translate(-50%,105%);transition:.2s;background:#fff;border-radius:22px 22px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));box-shadow:0 -12px 36px rgba(0,0,0,.14)}
 .sheet.open{display:block;transform:translate(-50%,0)}
@@ -44,12 +44,12 @@ path{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round}
 .menu{position:absolute;top:68px;right:12px;z-index:15;background:#fff;border:1px solid #ddd9cf;border-radius:14px;padding:7px;box-shadow:0 8px 25px rgba(0,0,0,.12);display:none}.menu.open{display:block}.menu button{display:block;width:100%;border:0;background:none;text-align:left;padding:10px 12px;border-radius:9px}.menu button:active{background:#eee}
 .emoji-pages{display:flex;justify-content:center;align-items:center;gap:5px;flex-wrap:wrap;margin:12px 0 4px}.emoji-pages button{min-width:34px;height:34px;border:1px solid #ddd8ce;border-radius:9px;background:#faf9f6;color:#555}.emoji-pages button.active{background:var(--green);color:#fff;border-color:var(--green)}
 .palette{display:grid;grid-template-columns:repeat(6,1fr);gap:9px;margin:10px 0}.swatch{height:42px;border:2px solid transparent;border-radius:12px}.swatch.active{border-color:#4f5f52;outline:2px solid #d8ded7}.sectionlabel{font-size:12px;color:#777;margin:12px 0 6px}.recent-images{display:flex;gap:8px;overflow-x:auto;padding:4px 0 8px}.recent-images button{flex:0 0 78px;height:62px;padding:0;border:2px solid transparent;border-radius:10px;overflow:hidden;background:#eee}.recent-images img{width:100%;height:100%;object-fit:cover}.hidden{display:none!important}
-@media(max-width:600px){.brand{font-size:18px}.head .hide-sm{display:none}.toolbar{width:calc(100% - 24px);justify-content:space-around}.toolbar button{font-size:12px;padding:9px 6px}.emoji-grid{grid-template-columns:repeat(7,1fr)}}
+@media(max-width:600px){.brand{font-size:18px}.head .hide-sm{display:none}.toolbar{width:calc(100% - 24px);justify-content:space-around}.toolbar button{font-size:12px;padding:7px 5px}.emoji-grid{grid-template-columns:repeat(7,1fr)}}
 .toolbar button,.fab,header,header button,.sheet,.sheet button,.sheet input,.menu,.menu button{touch-action:manipulation}.toolbar{touch-action:none}
 
 #textSheet{position:absolute;left:50%;top:88px;bottom:auto;width:min(390px,calc(100% - 28px));transform:translateX(-50%);border-radius:16px;padding:10px 12px;box-shadow:0 10px 30px rgba(0,0,0,.16);overflow:visible}#textSheet h3,#textSheet .sheet-close{display:none}.font-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.font-grid button,.size-row button{border:1px solid #ddd8ce;background:#faf9f6;border-radius:11px;padding:10px 6px;min-height:44px;font-size:13px}.font-grid button.active,.size-row button.active{background:#eaf0e8;border-color:#8fa28e}.size-row{display:flex;gap:7px;flex-wrap:wrap}.size-row button{flex:1}.node .label{line-height:1.35}.node .label.inline-edit{user-select:text;-webkit-user-select:text;cursor:text;outline:2px solid rgba(88,113,95,.28);outline-offset:4px;border-radius:5px;min-width:40px}
 .zoom-controls{position:absolute;right:14px;top:14px;z-index:7;display:flex;align-items:center;background:rgba(255,255,255,.96);border:1px solid #dedad0;border-radius:13px;box-shadow:0 5px 16px rgba(50,50,45,.1);overflow:hidden}.zoom-controls button{border:0;background:transparent;min-width:42px;height:40px;padding:0 8px;color:#555;font-weight:700}.zoom-controls #zoomLabel{min-width:58px;font-size:12px;font-weight:600;border-left:1px solid #eee9df;border-right:1px solid #eee9df}.zoom-controls button:active{background:#eee}
-.zoom-stack{position:absolute;right:14px;top:14px;z-index:9;display:flex;flex-direction:column;align-items:flex-end;gap:7px}.zoom-stack .zoom-controls{position:static}.history-controls{display:flex;gap:6px}.history-controls button{width:42px;height:38px;border:1px solid #dedad0;border-radius:11px;background:rgba(255,255,255,.96);box-shadow:0 4px 12px rgba(50,50,45,.08);font-size:20px;color:#555d55;font-weight:700}.history-controls button:disabled{opacity:.35}.history-controls button:active:not(:disabled){background:#eee}.toolbar button[aria-label]{min-width:40px;font-size:16px}.toolbar #fontBtn{font-size:14px;font-weight:700}
+.zoom-stack{position:absolute;right:14px;top:14px;z-index:9;display:flex;flex-direction:column;align-items:flex-end;gap:7px}.zoom-stack .zoom-controls{position:static}.history-controls{display:flex;gap:6px}.history-controls button{width:42px;height:38px;border:1px solid #dedad0;border-radius:11px;background:rgba(255,255,255,.96);box-shadow:0 4px 12px rgba(50,50,45,.08);font-size:20px;color:#555d55;font-weight:700}.history-controls button:disabled{opacity:.35}.history-controls button:active:not(:disabled){background:#eee}.toolbar button[aria-label]{min-width:34px;font-size:15px}.toolbar #deleteNodeBtn{font-size:13px;min-width:32px;padding-left:5px;padding-right:5px}.toolbar #fontBtn{font-size:14px;font-weight:700}
 
 .collapsed-badge{position:absolute;right:-8px;top:-8px;background:#58715f;color:#fff;border-radius:999px;font-size:10px;padding:3px 6px;border:2px solid #fff}.root-lines{display:grid;gap:8px;margin-top:8px}.root-line-row{display:grid;grid-template-columns:minmax(90px,1fr) auto;gap:10px;align-items:center;padding:9px 10px;border:1px solid #e7e2d8;border-radius:11px}.root-line-dots{display:grid;grid-template-columns:repeat(12,22px);gap:4px}.line-dot{width:22px;height:22px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #d8d3ca;padding:0}.line-dot.active{box-shadow:0 0 0 2px #4f5f52}.toolbar .mini-action{font-weight:700}.lock-on{background:#e8eee6!important;color:#405645!important}@media(max-width:760px){.root-line-row{grid-template-columns:1fr}.root-line-dots{grid-template-columns:repeat(6,24px);gap:5px}.line-dot{width:24px;height:24px}}
 </style>
@@ -59,7 +59,7 @@ path{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round}
 <body>
 <div class="app">
 <header>
- <div class="brand">생각가지 <span class="version">v2.11</span></div>
+ <div class="brand">생각가지 <span class="version">v2.12</span></div>
  <div class="head">
   <button id="newMap">새 맵</button>
   <button class="hide-sm" id="centerBtn">가운데로</button>
@@ -72,7 +72,7 @@ path{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round}
  <div class="zoom-stack"><div class="zoom-controls"><button id="zoomOut" aria-label="축소">−</button><button id="zoomLabel">100%</button><button id="zoomIn" aria-label="확대">＋</button></div><div class="history-controls"><button id="undoBtn" title="실행취소" aria-label="실행취소">←</button><button id="redoBtn" title="다시실행" aria-label="다시실행">→</button></div></div>
  <div class="toolbar context-hidden" id="toolbar">
   <button id="addChild">＋ 가지</button><button id="addSibling">＋ 형제</button>
-  <button id="editNode" title="수정" aria-label="수정">✎</button><button id="fontBtn" title="글자" aria-label="글자">Aa</button><button id="colorBtn" title="색상" aria-label="색상">●</button><button id="emojiBtn" title="이모지" aria-label="이모지">☺</button><button id="imageBtn" title="이미지" aria-label="이미지">▧</button><button id="multiBtn" title="다중선택" aria-label="다중선택">☑</button><button id="collapseBtn" title="접기/펼치기" aria-label="접기/펼치기">−</button><button id="duplicateBtn" title="복제" aria-label="복제">⧉</button><button id="deleteNodeBtn" title="삭제" aria-label="삭제">🗑</button>
+  <button id="fontBtn" title="글자" aria-label="글자">Aa</button><button id="colorBtn" title="색상" aria-label="색상">●</button><button id="emojiBtn" title="이모지" aria-label="이모지">☺</button><button id="imageBtn" title="이미지" aria-label="이미지">▧</button><button id="multiBtn" title="다중선택" aria-label="다중선택">☑</button><button id="collapseBtn" title="접기/펼치기" aria-label="접기/펼치기">−</button><button id="duplicateBtn" title="복제" aria-label="복제">⧉</button><button id="deleteNodeBtn" title="삭제" aria-label="삭제">🗑</button>
  </div>
  <button class="fab" id="fab">＋</button>
 </div>
@@ -129,7 +129,7 @@ path{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round}
 <input type="file" id="backupInput" accept=".json,application/json" class="hidden"><input type="file" id="mapInput" class="hidden">
 <script>
 const KEY='saenggakgaji-offline-v1', RECENT_KEY='saenggakgaji-recents-v1', COLORS=['#dfe8dc','#dfe7ee','#eee0df','#eee7cf','#e9e5ef'], PALETTE=['#dfe8dc','#dfe7ee','#eee0df','#eee7cf','#e9e5ef','#dce9e7','#f0ddd1','#e2e2e2','#cfe0d2','#d8d2e8','#f1d6dc','#d8e3f0'], LINE_PALETTE=['#9fb39b','#9eafc1','#c5a5a2','#c7b878','#afa6c2','#99b8b4','#caa28d','#a9a9a9','#91ad97','#9d92bb','#c997a3','#95abc3'];
-let data, selectedId='root', textMode='child', scale=1, tx=0, ty=0, drag=false, px=0,py=0, pendingImage=null, showCredits=true, pendingColor=COLORS[0], pendingLineColor='#b9c5b7', toolbarManual=false, positionLocked=false, multiMode=false, ctrlHeld=false, suppressClickId=null, suppressClickUntil=0;
+let data, selectedId='root', textMode='child', scale=1, tx=0, ty=0, drag=false, px=0,py=0, pendingImage=null, showCredits=true, pendingColor=COLORS[0], pendingLineColor='#b9c5b7', toolbarManual=false, positionLocked=false, multiMode=false, ctrlHeld=false, ctrlGraceUntil=0, suppressClickId=null, suppressClickUntil=0;
 let selectedIds=new Set();
 let lastNodeTapId=null,lastNodeTapAt=0;
 let undoStack=[],redoStack=[],historyBusy=false,lastSnapshot='';
@@ -162,9 +162,9 @@ function render(){
   el.innerHTML=(n.image?`<img src="${n.image}">`:'')+(n.emoji?`<div class="emoji">${esc(n.emoji)}</div>`:'')+
    `<div class="label">${esc(n.text)}</div>`+
    (n.image&&n.credit&&showCredits&&n.showCredit!==false?`<div class="credit">${esc(n.credit)}</div>`:'')+(n.collapsed&&children(n.id).length?`<span class="collapsed-badge">+${descendants(n.id).length}</span>`:'');
-  el.addEventListener('click',e=>{e.stopPropagation();if(suppressClickId===n.id&&Date.now()<suppressClickUntil){suppressClickId=null;return}let additive=multiMode||ctrlHeld||e.ctrlKey||e.metaKey;if(additive){if(selectedIds.has(n.id))selectedIds.delete(n.id);else selectedIds.add(n.id);if(selectedIds.size){selectedId=n.id}else selectedId='root'}else{selectedIds.clear();selectedId=n.id}toolbarManual=false;render()});bindTouchNode(el);
+  el.addEventListener('click',e=>{e.stopPropagation();if(suppressClickId===n.id&&Date.now()<suppressClickUntil){suppressClickId=null;return}let additive=multiMode||ctrlActive(e);if(additive){if(selectedIds.has(n.id))selectedIds.delete(n.id);else selectedIds.add(n.id);if(selectedIds.size){selectedId=n.id}else selectedId='root'}else{selectedIds.clear();selectedId=n.id}toolbarManual=false;render()});bindTouchNode(el);
   el.addEventListener('dblclick',e=>{e.preventDefault();e.stopPropagation();selectedId=n.id;beginInlineEdit(n.id)});
-  el.addEventListener('pointerup',e=>{if(e.pointerType!=='touch'&&e.pointerType!=='pen')return;if(multiMode||ctrlHeld)return;let now=Date.now();if(lastNodeTapId===n.id&&now-lastNodeTapAt<420){e.preventDefault();e.stopPropagation();lastNodeTapId=null;lastNodeTapAt=0;suppressClickId=n.id;suppressClickUntil=now+900;selectedId=n.id;setTimeout(()=>beginInlineEdit(n.id),0)}else{lastNodeTapId=n.id;lastNodeTapAt=now}});
+  el.addEventListener('pointerup',e=>{if(e.pointerType!=='touch'&&e.pointerType!=='pen')return;if(multiMode||ctrlActive(e))return;let now=Date.now();if(lastNodeTapId===n.id&&now-lastNodeTapAt<420){e.preventDefault();e.stopPropagation();lastNodeTapId=null;lastNodeTapAt=0;suppressClickId=n.id;suppressClickUntil=now+900;selectedId=n.id;setTimeout(()=>beginInlineEdit(n.id),0)}else{lastNodeTapId=n.id;lastNodeTapAt=now}});
   stage.appendChild(el)
  });
  drawLines();
@@ -195,7 +195,7 @@ function bindTouchNode(el){
  el.addEventListener('touchstart',function(e){
    if(e.touches.length!==1)return;
    const n=node(id); if(!n)return;
-   touchAdditive=multiMode||ctrlHeld;
+   touchAdditive=multiMode||ctrlActive(e);
    startX=e.touches[0].clientX; startY=e.touches[0].clientY;baseX=n.x;baseY=n.y;moving=false;
    if(!touchAdditive&&!positionLocked)selectedId=id;
  },{passive:true});
@@ -274,7 +274,7 @@ $('fab').onclick=()=>{
  if(!node(selectedId)) selectedId='root';
  createInlineNode('child');
 };
-$('addSibling').onclick=()=>createInlineNode('sibling');$('editNode').onclick=()=>beginInlineEdit(selectedId);
+$('addSibling').onclick=()=>createInlineNode('sibling');
 function commitText(){
  let t=$('textInput').value.trim();if(!t)return;let cur=node(selectedId);if(!cur)return;if(textMode==='edit'){cur.text=t}
  else{let parent=textMode==='sibling'?(cur.parent||cur.id):cur.id;let p=node(parent),kids=children(parent);let id='n'+Date.now();
@@ -356,10 +356,20 @@ $('toggleCredits').onclick=()=>{showCredits=!showCredits;save();render();$('menu
 $('centerBtn').onclick=$('fitBtn').onclick=()=>{center();$('menu').classList.remove('open')};
 function deleteSelectedNode(){let roots=selectedIds.size?[...selectedIds]:[selectedId];roots=roots.filter(id=>{let n=node(id);return n&&!n.root});if(!roots.length)return;let ids=new Set(roots),changed=true;while(changed){changed=false;data.nodes.forEach(x=>{if(x.parent&&ids.has(x.parent)&&!ids.has(x.id)){ids.add(x.id);changed=true}})}let fallback=node(roots[0])?.parent||'root';data.nodes=data.nodes.filter(x=>!ids.has(x.id));selectedIds.clear();multiMode=false;selectedId=node(fallback)?fallback:'root';save();render();$('menu').classList.remove('open')}
 $('deleteBtn').onclick=deleteSelectedNode;$('deleteNodeBtn').onclick=deleteSelectedNode;
-document.addEventListener('keydown',e=>{if(e.key==='Control')ctrlHeld=true});
-document.addEventListener('keyup',e=>{if(e.key==='Control')ctrlHeld=false});
-window.addEventListener('blur',()=>{ctrlHeld=false});
-document.addEventListener('visibilitychange',()=>{if(document.hidden)ctrlHeld=false});
+function ctrlActive(e){
+ try{if(e&&typeof e.getModifierState==='function'&&e.getModifierState('Control'))return true}catch(_){}
+ return ctrlHeld||Date.now()<ctrlGraceUntil||!!(e&&e.ctrlKey);
+}
+function noteCtrlDown(e){if(e.key==='Control'||e.code==='ControlLeft'||e.code==='ControlRight'||e.ctrlKey){ctrlHeld=true;ctrlGraceUntil=Date.now()+1800}}
+function noteCtrlUp(e){if(e.key==='Control'||e.code==='ControlLeft'||e.code==='ControlRight'){ctrlHeld=false;ctrlGraceUntil=Date.now()+900}}
+// Capture phase is important on iPad Safari with an external keyboard: remember Ctrl before touch/click handlers run.
+window.addEventListener('keydown',noteCtrlDown,true);
+document.addEventListener('keydown',noteCtrlDown,true);
+window.addEventListener('keyup',noteCtrlUp,true);
+document.addEventListener('keyup',noteCtrlUp,true);
+// Do not clear on a transient iPad focus change; the short grace window bridges keyboard→touch handoff.
+window.addEventListener('blur',()=>{ctrlHeld=false;ctrlGraceUntil=Math.max(ctrlGraceUntil,Date.now()+650)});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){ctrlHeld=false;ctrlGraceUntil=0}});
 document.addEventListener('keydown',e=>{if(e.key!=='Delete'&&e.key!=='Backspace')return;let t=e.target;if(t&&(t.matches('input,textarea')||t.isContentEditable))return;if(selectedIds.size||selectedId!=='root'){e.preventDefault();deleteSelectedNode()}});
 $('newMap').onclick=()=>{if(confirm('새 마인드맵을 시작할까요? 현재 맵은 지워집니다.')){data=fresh();showCredits=true;selectedId='root';save();render();center()}};
 function validMap(o){return o&&Array.isArray(o.nodes)&&o.nodes.every(n=>n&&typeof n.id==='string'&&typeof n.text==='string')}
