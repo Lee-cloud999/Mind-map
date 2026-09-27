@@ -58,7 +58,7 @@ path{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round}
 <body>
 <div class="app">
 <header>
- <div class="brand">생각가지 <span class="version">v2.5</span></div>
+ <div class="brand">생각가지 <span class="version">v2.6</span></div>
  <div class="head">
   <button id="newMap">새 맵</button>
   <button class="hide-sm" id="centerBtn">가운데로</button>
@@ -71,7 +71,7 @@ path{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round}
  <div class="zoom-controls"><button id="zoomOut" aria-label="축소">−</button><button id="zoomLabel">100%</button><button id="zoomIn" aria-label="확대">＋</button></div>
  <div class="toolbar context-hidden" id="toolbar">
   <button id="undoBtn" class="mini-action" title="실행취소">↶</button><button id="redoBtn" class="mini-action" title="다시실행">↷</button><button id="addChild">＋ 가지</button><button id="addSibling">＋ 형제</button>
-  <button id="editNode">✎ 수정</button><button id="fontBtn">Aa 글자</button><button id="colorBtn">● 색상</button><button id="emojiBtn">☺ 이모지</button><button id="imageBtn">▧ 이미지</button><button id="collapseBtn">− 접기</button><button id="duplicateBtn">⧉ 복제</button>
+  <button id="editNode">✎ 수정</button><button id="fontBtn">Aa 글자</button><button id="colorBtn">● 색상</button><button id="emojiBtn">☺ 이모지</button><button id="imageBtn">▧ 이미지</button><button id="collapseBtn">− 접기</button><button id="duplicateBtn">⧉ 복제</button><button id="deleteNodeBtn">⌫ 삭제</button>
  </div>
  <button class="fab" id="fab">＋</button>
 </div>
@@ -127,7 +127,7 @@ path{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round}
 </div>
 <input type="file" id="backupInput" accept=".json,application/json" class="hidden"><input type="file" id="mapInput" accept=".json,.mindmap.json,application/json" class="hidden">
 <script>
-const KEY='saenggakgaji-offline-v1', RECENT_KEY='saenggakgaji-recents-v1', COLORS=['#dfe8dc','#dfe7ee','#eee0df','#eee7cf','#e9e5ef'], PALETTE=['#dfe8dc','#dfe7ee','#eee0df','#eee7cf','#e9e5ef','#dce9e7','#f0ddd1','#e2e2e2','#cfe0d2','#d8d2e8','#f1d6dc','#d8e3f0'];
+const KEY='saenggakgaji-offline-v1', RECENT_KEY='saenggakgaji-recents-v1', COLORS=['#dfe8dc','#dfe7ee','#eee0df','#eee7cf','#e9e5ef'], PALETTE=['#dfe8dc','#dfe7ee','#eee0df','#eee7cf','#e9e5ef','#dce9e7','#f0ddd1','#e2e2e2','#cfe0d2','#d8d2e8','#f1d6dc','#d8e3f0'], LINE_PALETTE=['#9fb39b','#9eafc1','#c5a5a2','#c7b878','#afa6c2','#99b8b4','#caa28d','#a9a9a9','#91ad97','#9d92bb','#c997a3','#95abc3'];
 let data, selectedId='root', textMode='child', scale=1, tx=0, ty=0, drag=false, px=0,py=0, pendingImage=null, showCredits=true, pendingColor=COLORS[0], pendingLineColor='#b9c5b7', toolbarManual=false, positionLocked=false;
 let undoStack=[],redoStack=[],historyBusy=false,lastSnapshot='';
 let recents=(()=>{try{return JSON.parse(localStorage.getItem(RECENT_KEY))||{emojis:[],images:[]}}catch(e){return {emojis:[],images:[]}}})();
@@ -245,9 +245,9 @@ function commitText(){
 $('textInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();commitText()}else if(e.key==='Escape')closeSheets()});
 
 function descendants(id){let out=[],q=[id];while(q.length){let a=q.shift();children(a).forEach(c=>{out.push(c);q.push(c.id)})}return out}
-function bindPalette(id,key){let box=$(id),val=key==='node'?pendingColor:pendingLineColor;box.innerHTML=PALETTE.map(c=>`<button type="button" class="swatch${c===val?' active':''}" data-c="${c}" style="background:${c}" aria-label="색상 ${c}"></button>`).join('');box.querySelectorAll('button').forEach(b=>{let pick=e=>{e.preventDefault();e.stopPropagation();if(key==='node')pendingColor=b.dataset.c;else pendingLineColor=b.dataset.c;renderPalettes()};b.addEventListener('pointerup',pick)})}
+function bindPalette(id,key){let box=$(id),val=key==='node'?pendingColor:pendingLineColor;box.innerHTML=(key==='node'?PALETTE:LINE_PALETTE).map(c=>`<button type="button" class="swatch${c===val?' active':''}" data-c="${c}" style="background:${c}" aria-label="색상 ${c}"></button>`).join('');box.querySelectorAll('button').forEach(b=>{let pick=e=>{e.preventDefault();e.stopPropagation();if(key==='node')pendingColor=b.dataset.c;else pendingLineColor=b.dataset.c;renderPalettes()};b.addEventListener('pointerup',pick)})}
 function renderPalettes(){bindPalette('colorPalette','node');bindPalette('linePalette','line')}
-function renderRootLineEditor(){let ed=$('rootLineEditor'),r=node('root');if(!ed||!r)return;ed.innerHTML=children(r.id).map(c=>`<div class="root-line-row"><span>${esc(c.text)}</span><div class="root-line-dots">${PALETTE.map(col=>`<button type="button" class="line-dot${(c.lineColor||'#b9c5b7')===col?' active':''}" data-line-id="${esc(c.id)}" data-c="${col}" style="background:${col}" aria-label="${esc(c.text)} 연결선 색상"></button>`).join('')}</div></div>`).join('');ed.querySelectorAll('.line-dot').forEach(b=>b.addEventListener('pointerup',e=>{e.preventDefault();e.stopPropagation();let c=node(b.dataset.lineId);if(!c)return;c.lineColor=b.dataset.c;save();render();renderRootLineEditor()}))}
+function renderRootLineEditor(){let ed=$('rootLineEditor'),r=node('root');if(!ed||!r)return;ed.innerHTML=children(r.id).map(c=>`<div class="root-line-row"><span>${esc(c.text)}</span><div class="root-line-dots">${LINE_PALETTE.map(col=>`<button type="button" class="line-dot${(c.lineColor||'#b9c5b7')===col?' active':''}" data-line-id="${esc(c.id)}" data-c="${col}" style="background:${col}" aria-label="${esc(c.text)} 연결선 색상"></button>`).join('')}</div></div>`).join('');ed.querySelectorAll('.line-dot').forEach(b=>b.addEventListener('pointerup',e=>{e.preventDefault();e.stopPropagation();let c=node(b.dataset.lineId);if(!c)return;c.lineColor=b.dataset.c;save();render();renderRootLineEditor()}))}
 $('colorBtn').onclick=()=>{let n=node(selectedId);if(!n)return;pendingColor=n.color||(n.root?'#58715f':COLORS[0]);pendingLineColor=n.lineColor||n.branchColor||'#b9c5b7';renderPalettes();let wrap=$('rootLineWrap');wrap.classList.toggle('hidden',!n.root);if(n.root)renderRootLineEditor();openSheet('colorSheet')};
 $('colorSave').onclick=()=>{let n=node(selectedId);if(!n)return;let desc=$('applyDesc').checked?descendants(n.id):[];n.color=pendingColor;if(n.root){if($('applyDesc').checked)desc.forEach(x=>x.color=pendingColor)}else{n.lineColor=pendingLineColor;if($('applyDesc').checked)desc.forEach(x=>{x.color=pendingColor;x.lineColor=pendingLineColor})}save();render();closeSheets()};
 function nodeBox(n,x=n.x,y=n.y){let w=n.root?210:170,h=n.image?(n.root?285:245):Math.max(76,58+(String(n.text||'').length>18?28:0));return{x,y,w,h}}
@@ -310,7 +310,8 @@ $('pdfBtn').onclick=async()=>{ $('menu').classList.remove('open');let c=await ex
 $('moreBtn').onclick=e=>{e.stopPropagation();$('menu').classList.toggle('open')};document.addEventListener('click',e=>{if(!$('menu').contains(e.target)&&e.target!==$('moreBtn'))$('menu').classList.remove('open')});
 $('toggleCredits').onclick=()=>{showCredits=!showCredits;save();render();$('menu').classList.remove('open')};
 $('centerBtn').onclick=$('fitBtn').onclick=()=>{center();$('menu').classList.remove('open')};
-$('deleteBtn').onclick=()=>{let n=node(selectedId);if(!n||n.root){alert('중심 노드는 삭제할 수 없어요.');return}if(!confirm('선택한 노드와 하위 가지를 삭제할까요?'))return;let ids=new Set([n.id]),changed=true;while(changed){changed=false;data.nodes.forEach(x=>{if(x.parent&&ids.has(x.parent)&&!ids.has(x.id)){ids.add(x.id);changed=true}})}data.nodes=data.nodes.filter(x=>!ids.has(x.id));selectedId='root';save();render();$('menu').classList.remove('open')};
+function deleteSelectedNode(){let n=node(selectedId);if(!n||n.root)return;let ids=new Set([n.id]),changed=true;while(changed){changed=false;data.nodes.forEach(x=>{if(x.parent&&ids.has(x.parent)&&!ids.has(x.id)){ids.add(x.id);changed=true}})}data.nodes=data.nodes.filter(x=>!ids.has(x.id));selectedId=n.parent&&node(n.parent)?n.parent:'root';save();render();$('menu').classList.remove('open')}
+$('deleteBtn').onclick=deleteSelectedNode;$('deleteNodeBtn').onclick=deleteSelectedNode;
 $('newMap').onclick=()=>{if(confirm('새 마인드맵을 시작할까요? 현재 맵은 지워집니다.')){data=fresh();showCredits=true;selectedId='root';save();render();center()}};
 function validMap(o){return o&&Array.isArray(o.nodes)&&o.nodes.every(n=>n&&typeof n.id==='string'&&typeof n.text==='string')}
 $('saveMapBtn').onclick=async()=>{let base=(node('root')?.text||'생각가지').replace(/[\/:*?"<>|]/g,'-').slice(0,40),asked=prompt('저장할 파일 이름을 입력해 주세요.',base);if(asked===null){$('menu').classList.remove('open');return}asked=asked.trim().replace(/[\/:*?"<>|]/g,'-')||'생각가지';asked=asked.replace(/\.mindmap\.json$/i,'').replace(/\.json$/i,'');let title=asked+'.mindmap.json',payload={...data,fileFormat:'saenggakgaji-mindmap',fileVersion:3,savedAt:new Date().toISOString()},blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),file=new File([blob],title,{type:'application/json'});try{let isiOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);if(!isiOS&&window.showSaveFilePicker){let h=await showSaveFilePicker({suggestedName:title,types:[{description:'생각가지 마인드맵',accept:{'application/json':['.json']}}]});let w=await h.createWritable();await w.write(blob);await w.close()}else if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:'다른 이름으로 저장'});}else{let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=title;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),800)}}catch(e){if(e.name!=='AbortError')alert('파일을 저장하지 못했어요.')} $('menu').classList.remove('open')};
@@ -323,7 +324,7 @@ render();
 
 // v2.2: register the versioned service worker so GitHub Pages refreshes cached app files.
 if('serviceWorker' in navigator){
- window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=2.5').then(r=>r.update()).catch(()=>{}));
+ window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=2.6').then(r=>r.update()).catch(()=>{}));
 }
 </script>
 </body></html>
