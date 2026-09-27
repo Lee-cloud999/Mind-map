@@ -25,8 +25,8 @@ path{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round}
 .node .credit{font-size:9px;color:#7f857d;margin-top:5px;line-height:1.25}.node.root .credit{color:#dce5df}
 .node .label{word-break:break-word}
 .tip{position:absolute;top:12px;left:12px;background:rgba(255,255,255,.9);border:1px solid #e3dfd5;border-radius:11px;padding:8px 10px;color:#777;font-size:11px;pointer-events:none}
-.toolbar{position:absolute;left:50%;top:90px;display:flex;gap:3px;padding:6px;background:rgba(255,255,255,.97);border:1px solid #dedad0;border-radius:16px;box-shadow:0 7px 22px rgba(50,50,45,.14);z-index:8;transform:translateX(-50%);max-width:calc(100% - 24px);overflow-x:auto}
-.toolbar.context-hidden{display:none}.toolbar button{border:0;background:transparent;border-radius:10px;padding:9px 10px;color:#555d55;white-space:nowrap}.toolbar button:active{background:#eee}
+.toolbar{position:absolute;cursor:grab;left:50%;top:90px;display:flex;gap:3px;padding:6px;background:rgba(255,255,255,.97);border:1px solid #dedad0;border-radius:16px;box-shadow:0 7px 22px rgba(50,50,45,.14);z-index:8;transform:translateX(-50%);max-width:calc(100% - 24px);overflow-x:auto}
+.toolbar.dragging{cursor:grabbing}.toolbar.context-hidden{display:none}.toolbar button{border:0;background:transparent;border-radius:10px;padding:9px 10px;color:#555d55;white-space:nowrap}.toolbar button:active{background:#eee}
 .fab{position:absolute;right:15px;bottom:76px;width:54px;height:54px;border:0;border-radius:50%;background:var(--green);color:#fff;font-size:28px;box-shadow:0 7px 20px rgba(50,70,55,.25);z-index:4}
 .sheet{display:none;position:absolute;z-index:20;left:50%;bottom:0;width:min(560px,100%);height:auto;max-height:min(68vh,560px);overflow-y:auto;-webkit-overflow-scrolling:touch;transform:translate(-50%,105%);transition:.2s;background:#fff;border-radius:22px 22px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));box-shadow:0 -12px 36px rgba(0,0,0,.14)}
 .sheet.open{display:block;transform:translate(-50%,0)}
@@ -40,13 +40,13 @@ path{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round}
 .emoji-pages{display:flex;justify-content:center;align-items:center;gap:5px;flex-wrap:wrap;margin:12px 0 4px}.emoji-pages button{min-width:34px;height:34px;border:1px solid #ddd8ce;border-radius:9px;background:#faf9f6;color:#555}.emoji-pages button.active{background:var(--green);color:#fff;border-color:var(--green)}
 .palette{display:grid;grid-template-columns:repeat(6,1fr);gap:9px;margin:10px 0}.swatch{height:42px;border:2px solid transparent;border-radius:12px}.swatch.active{border-color:#4f5f52;outline:2px solid #d8ded7}.sectionlabel{font-size:12px;color:#777;margin:12px 0 6px}.recent-images{display:flex;gap:8px;overflow-x:auto;padding:4px 0 8px}.recent-images button{flex:0 0 78px;height:62px;padding:0;border:2px solid transparent;border-radius:10px;overflow:hidden;background:#eee}.recent-images img{width:100%;height:100%;object-fit:cover}.hidden{display:none!important}
 @media(max-width:600px){.brand{font-size:18px}.head .hide-sm{display:none}.toolbar{width:calc(100% - 24px);justify-content:space-around}.toolbar button{font-size:12px;padding:9px 6px}.emoji-grid{grid-template-columns:repeat(7,1fr)}}
-.toolbar,.toolbar button,.fab,header,header button,.sheet,.sheet button,.sheet input,.menu,.menu button{touch-action:manipulation}
+.toolbar button,.fab,header,header button,.sheet,.sheet button,.sheet input,.menu,.menu button{touch-action:manipulation}.toolbar{touch-action:none}
 </style>
 </head>
 <body>
 <div class="app">
 <header>
- <div class="brand">생각가지 <span class="version">v2.1</span></div>
+ <div class="brand">생각가지 <span class="version">v2.2</span></div>
  <div class="head">
   <button id="newMap">새 맵</button>
   <button class="hide-sm" id="centerBtn">가운데로</button>
@@ -83,7 +83,8 @@ path{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round}
 <div class="sheet" id="colorSheet">
  <button class="sheet-close" data-close aria-label="닫기">×</button>
  <h3>가지 색상</h3>
- <div class="sectionlabel">색상 선택</div><div class="palette" id="colorPalette"></div>
+ <div class="sectionlabel">노드 색상</div><div class="palette" id="colorPalette"></div>
+ <div class="sectionlabel">연결선 색상</div><div class="palette" id="linePalette"></div>
  <label style="display:flex;align-items:center;gap:9px;margin-top:12px"><input type="checkbox" id="applyDesc" checked> 이 가지 아래의 하위 가지에도 적용</label>
  <div class="actions"><button class="cancel" data-close>취소</button><button class="primary" id="colorSave">적용</button></div>
 </div>
@@ -111,7 +112,7 @@ path{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round}
 <input type="file" id="backupInput" accept=".json,application/json" class="hidden"><input type="file" id="mapInput" accept=".json,.mindmap.json,application/json" class="hidden">
 <script>
 const KEY='saenggakgaji-offline-v1', RECENT_KEY='saenggakgaji-recents-v1', COLORS=['#dfe8dc','#dfe7ee','#eee0df','#eee7cf','#e9e5ef'], PALETTE=['#dfe8dc','#dfe7ee','#eee0df','#eee7cf','#e9e5ef','#dce9e7','#f0ddd1','#e2e2e2','#cfe0d2','#d8d2e8','#f1d6dc','#d8e3f0'];
-let data, selectedId='root', textMode='child', scale=1, tx=0, ty=0, drag=false, px=0,py=0, pendingImage=null, showCredits=true, pendingColor=COLORS[0];
+let data, selectedId='root', textMode='child', scale=1, tx=0, ty=0, drag=false, px=0,py=0, pendingImage=null, showCredits=true, pendingColor=COLORS[0], pendingLineColor='#b9c5b7', toolbarManual=false;
 let recents=(()=>{try{return JSON.parse(localStorage.getItem(RECENT_KEY))||{emojis:[],images:[]}}catch(e){return {emojis:[],images:[]}}})();
 function saveRecents(){try{localStorage.setItem(RECENT_KEY,JSON.stringify(recents))}catch(e){}}
 const $=id=>document.getElementById(id), stage=$('stage'),ws=$('ws');
@@ -129,15 +130,16 @@ data=load();showCredits=data.showCredits!==false;
 function node(id){return data.nodes.find(n=>n.id===id)}
 function children(id){return data.nodes.filter(n=>n.parent===id)}
 function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function contrastText(c,isRoot=false){let m=String(c||'').match(/\d+/g);if(m&&m.length>=3){let y=(+m[0]*299 + +m[1]*587 + +m[2]*114)/1000;return y<145?'#fff':'#30352f'}return isRoot?'#fff':'#30352f'}
 function render(){
  stage.querySelectorAll('.node').forEach(n=>n.remove());
  data.nodes.forEach(n=>{
   const el=document.createElement('div');el.className='node'+(n.root?' root':'')+(n.id===selectedId?' selected':'');
-  el.dataset.id=n.id;el.style.left=n.x+'px';el.style.top=n.y+'px';if(!n.root)el.style.background=n.color||'#fff';el.style.fontFamily=n.fontFamily||'inherit';el.style.fontSize=(n.fontSize||defaultFontSize(n.id))+'px';
+  el.dataset.id=n.id;el.style.left=n.x+'px';el.style.top=n.y+'px';el.style.background=n.color||(n.root?'#58715f':'#fff');el.style.color=contrastText(el.style.backgroundColor,n.root);el.style.fontFamily=n.fontFamily||'inherit';el.style.fontSize=(n.fontSize||defaultFontSize(n.id))+'px';
   el.innerHTML=(n.image?`<img src="${n.image}">`:'')+(n.emoji?`<div class="emoji">${esc(n.emoji)}</div>`:'')+
    `<div class="label">${esc(n.text)}</div>`+
    (n.image&&n.credit&&showCredits&&n.showCredit!==false?`<div class="credit">${esc(n.credit)}</div>`:'');
-  el.addEventListener('click',e=>{e.stopPropagation();selectedId=n.id;render()});bindTouchNode(el);
+  el.addEventListener('click',e=>{e.stopPropagation();selectedId=n.id;toolbarManual=false;render()});bindTouchNode(el);
   el.addEventListener('dblclick',e=>{e.stopPropagation();selectedId=n.id;openText('edit')});
   stage.appendChild(el)
  });
@@ -151,11 +153,12 @@ function render(){
 
 function depthOf(id){let d=0,n=node(id);while(n&&n.parent){d++;n=node(n.parent)}return d}
 function defaultFontSize(id){let d=depthOf(id);return d===0?22:d===1?18:d===2?16:14}
-function positionToolbar(){let n=node(selectedId),tb=$('toolbar');if(!n)return;let x=tx+(n.x+85)*scale,y=ty+(n.y+72)*scale;x=Math.max(180,Math.min(ws.clientWidth-180,x));y=Math.max(72,Math.min(ws.clientHeight-70,y));tb.style.left=x+'px';tb.style.top=y+'px'}
+function positionToolbar(force=false){let n=node(selectedId),tb=$('toolbar');if(!n||(!force&&toolbarManual))return;requestAnimationFrame(()=>{let el=stage.querySelector('.node[data-id="'+CSS.escape(n.id)+'"]');if(!el)return;let r=el.getBoundingClientRect(),wr=ws.getBoundingClientRect(),tw=tb.offsetWidth||520,th=tb.offsetHeight||52,gap=18;let x=r.left-wr.left+r.width/2,y=r.bottom-wr.top+gap;if(y+th>ws.clientHeight-12)y=Math.max(12,r.top-wr.top-th-gap);x=Math.max(tw/2+12,Math.min(ws.clientWidth-tw/2-12,x));tb.style.left=x+'px';tb.style.top=y+'px'})}
 function drawLines(){
  let s='';data.nodes.filter(n=>n.parent).forEach(n=>{let p=node(n.parent);if(!p)return;
- let x1=p.x+85,y1=p.y+35,x2=n.x+85,y2=n.y+35,mid=(x1+x2)/2;
- let stroke=n.branchColor||n.color||'#b9c5b7';s+=`<path d="M${x1} ${y1} C${mid} ${y1},${mid} ${y2},${x2} ${y2}" stroke="${stroke}"/>`});$('lines').innerHTML=s
+ let pe=stage.querySelector('.node[data-id="'+CSS.escape(p.id)+'"]'),ne=stage.querySelector('.node[data-id="'+CSS.escape(n.id)+'"]');let pw=pe?pe.offsetWidth:(p.root?200:170),ph=pe?pe.offsetHeight:70,nw=ne?ne.offsetWidth:(n.root?200:170),nh=ne?ne.offsetHeight:70;
+ let x1=p.x+pw/2,y1=p.y+ph/2,x2=n.x+nw/2,y2=n.y+nh/2,mid=(x1+x2)/2;
+ let stroke=n.lineColor||n.branchColor||'#b9c5b7';s+=`<path d="M${x1} ${y1} C${mid} ${y1},${mid} ${y2},${x2} ${y2}" stroke="${stroke}"/>`});$('lines').innerHTML=s
 }
 let nd=null,nox=0,noy=0,moved=false;
 function nodeDown(e){
@@ -196,10 +199,10 @@ ws.addEventListener('pointerup',stopPan);ws.addEventListener('pointercancel',sto
 ws.addEventListener('wheel',e=>{e.preventDefault();scale=Math.max(.3,Math.min(1.8,scale*(e.deltaY>0?.9:1.1)));apply()},{passive:false});
 
 function openSheet(id){closeSheets();const target=$(id);if(target){target.classList.add('open')}}
-function closeSheets(){document.querySelectorAll('.sheet').forEach(x=>x.classList.remove('open'))}
-document.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeSheets);ws.addEventListener('pointerdown',e=>{if(document.querySelector('.sheet.open')&&!e.target.closest('.sheet')&&!e.target.closest('.toolbar')&&!e.target.closest('.node'))closeSheets()});
+function closeSheets(){document.querySelectorAll('.sheet').forEach(x=>x.classList.remove('open'));if(!$('toolbar').classList.contains('context-hidden')){toolbarManual=false;positionToolbar(true)}}
+document.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeSheets);ws.addEventListener('pointerdown',e=>{let outside=!e.target.closest('.sheet')&&!e.target.closest('.toolbar')&&!e.target.closest('.node');if(outside){closeSheets();$('toolbar').classList.add('context-hidden')}});
 function openText(mode){$('imageSheet').classList.remove('open');textMode=mode;let n=node(selectedId);$('textTitle').textContent=mode==='edit'?'노드 수정':mode==='sibling'?'형제 가지 추가':'하위 가지 추가';$('textInput').value=mode==='edit'&&n?n.text:'';openSheet('textSheet');positionTextSheet();setTimeout(()=>$('textInput').focus(),80)}
-function positionTextSheet(){let n=node(selectedId),sh=$('textSheet');if(!n)return;let x=tx+(n.x+85)*scale,y=ty+(n.y-10)*scale;x=Math.max(210,Math.min(ws.clientWidth-210,x));y=Math.max(70,Math.min(ws.clientHeight-90,y));sh.style.left=x+'px';sh.style.top=y+'px'}
+function positionTextSheet(){let n=node(selectedId),sh=$('textSheet');if(!n)return;requestAnimationFrame(()=>{let el=stage.querySelector('.node[data-id="'+CSS.escape(n.id)+'"]');if(!el)return;let r=el.getBoundingClientRect(),wr=ws.getBoundingClientRect(),x=r.left-wr.left+r.width/2,y=r.bottom-wr.top+16;x=Math.max(210,Math.min(ws.clientWidth-210,x));if(y+70>ws.clientHeight)y=Math.max(12,r.top-wr.top-70);sh.style.left=x+'px';sh.style.top=y+'px';let tb=$('toolbar');tb.classList.remove('context-hidden');toolbarManual=false;requestAnimationFrame(()=>{let sr=sh.getBoundingClientRect(),tw=tb.offsetWidth||520,th=tb.offsetHeight||52,txx=sr.left-wr.left+sr.width/2,tyy=sr.bottom-wr.top+14;if(tyy+th>ws.clientHeight-10)tyy=Math.max(10,sr.top-wr.top-th-14);txx=Math.max(tw/2+12,Math.min(ws.clientWidth-tw/2-12,txx));tb.style.left=txx+'px';tb.style.top=tyy+'px'})})}
 $('addChild').onclick=()=>openText('child');
 $('fab').onclick=()=>{
  if(!node(selectedId)) selectedId='root';
@@ -217,16 +220,23 @@ function commitText(){
 $('textInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();commitText()}else if(e.key==='Escape')closeSheets()});
 
 function descendants(id){let out=[],q=[id];while(q.length){let a=q.shift();children(a).forEach(c=>{out.push(c);q.push(c.id)})}return out}
-function renderPalette(){ $('colorPalette').innerHTML=PALETTE.map(c=>`<button type="button" class="swatch${c===pendingColor?' active':''}" data-c="${c}" style="background:${c}" aria-label="색상 ${c}"></button>`).join(''); $('colorPalette').querySelectorAll('button').forEach(b=>{const pick=e=>{e.preventDefault();e.stopPropagation();pendingColor=b.dataset.c;renderPalette()};b.addEventListener('click',pick);b.addEventListener('touchend',pick,{passive:false})})}
-$('colorBtn').onclick=()=>{let n=node(selectedId);if(!n)return;pendingColor=n.branchColor||n.color||COLORS[0];renderPalette();openSheet('colorSheet')};
-$('colorSave').onclick=()=>{let n=node(selectedId);if(!n)return;let targets=[n];if($('applyDesc').checked)targets.push(...descendants(n.id));targets.forEach(x=>{x.branchColor=pendingColor;x.color=pendingColor});save();render();closeSheets()};
-function autoArrange(doCenter=true){let root=node('root');if(!root)return;root.x=1100;root.y=760;let first=children(root.id), left=[],right=[];first.forEach((n,i)=>(i%2?left:right).push(n));function placeGroup(group,side){let total=group.length;group.forEach((n,i)=>{n.x=root.x+side*360;n.y=root.y+(i-(total-1)/2)*230;placeKids(n,side,1)})}function placeKids(p,side,depth){let kids=children(p.id),total=kids.length;kids.forEach((n,i)=>{n.x=p.x+side*280;n.y=p.y+(i-(total-1)/2)*130;placeKids(n,side,depth+1)})}placeGroup(right,1);placeGroup(left,-1);save();render();if(doCenter)center()}
+function bindPalette(id,key){let box=$(id),val=key==='node'?pendingColor:pendingLineColor;box.innerHTML=PALETTE.map(c=>`<button type="button" class="swatch${c===val?' active':''}" data-c="${c}" style="background:${c}" aria-label="색상 ${c}"></button>`).join('');box.querySelectorAll('button').forEach(b=>{let pick=e=>{e.preventDefault();e.stopPropagation();if(key==='node')pendingColor=b.dataset.c;else pendingLineColor=b.dataset.c;renderPalettes()};b.addEventListener('pointerup',pick)})}
+function renderPalettes(){bindPalette('colorPalette','node');bindPalette('linePalette','line')}
+$('colorBtn').onclick=()=>{let n=node(selectedId);if(!n)return;pendingColor=n.color||(n.root?'#58715f':COLORS[0]);pendingLineColor=n.root?(children(n.id)[0]?.lineColor||'#b9c5b7'):(n.lineColor||n.branchColor||'#b9c5b7');renderPalettes();openSheet('colorSheet')};
+$('colorSave').onclick=()=>{let n=node(selectedId);if(!n)return;let desc=$('applyDesc').checked?descendants(n.id):[];n.color=pendingColor;if(n.root){if($('applyDesc').checked)desc.forEach(x=>x.color=pendingColor);children(n.id).forEach(x=>x.lineColor=pendingLineColor);if($('applyDesc').checked)desc.forEach(x=>x.lineColor=pendingLineColor)}else{n.lineColor=pendingLineColor;if($('applyDesc').checked)desc.forEach(x=>{x.color=pendingColor;x.lineColor=pendingLineColor})}save();render();closeSheets()};
+function autoArrange(doCenter=true){let root=node('root');if(!root)return;root.x=1100;root.y=760;let first=children(root.id),left=[],right=[];first.forEach((n,i)=>(i%2?left:right).push(n));const h=n=>n.image?190:Math.max(82,58+(String(n.text||'').length>18?28:0));function span(n){let ks=children(n.id);if(!ks.length)return h(n)+42;return Math.max(h(n)+42,ks.reduce((a,c)=>a+span(c),0))}function layoutChildren(p,side){let ks=children(p.id);if(!ks.length)return;let total=ks.reduce((a,c)=>a+span(c),0),cursor=p.y-total/2;ks.forEach(c=>{let sp=span(c);c.x=p.x+side*300;c.y=cursor+sp/2-h(c)/2;cursor+=sp;layoutChildren(c,side)})}function group(g,side){let total=g.reduce((a,c)=>a+span(c),0),cursor=root.y-total/2;g.forEach(c=>{let sp=span(c);c.x=root.x+side*380;c.y=cursor+sp/2-h(c)/2;cursor+=sp;layoutChildren(c,side)})}group(right,1);group(left,-1);save();render();if(doCenter)center()}
 $('autoArrangeBtn').onclick=()=>{autoArrange();$('menu').classList.remove('open')};
 
 
 const FONTS=[['기본 고딕','-apple-system,BlinkMacSystemFont,Apple SD Gothic Neo,Noto Sans KR,sans-serif'],['명조','Georgia,Noto Serif KR,serif'],['마루부리','MaruBuri,Noto Serif KR,serif'],['손글씨','Nanum Pen Script,Apple SD Gothic Neo,cursive']];let pendingFont='',pendingSize=16;
-function renderFontControls(){let n=node(selectedId);pendingFont=n.fontFamily||'inherit';pendingSize=n.fontSize||defaultFontSize(n.id);$('fontGrid').innerHTML=FONTS.map(([a,f])=>`<button type="button" data-f="${f}" class="${pendingFont===f?'active':''}">${a}</button>`).join('');$('fontGrid').querySelectorAll('button').forEach(b=>b.onclick=()=>{pendingFont=b.dataset.f;renderFontControls()});$('sizeRow').innerHTML=[12,14,16,18,20,22,24,28].map(z=>`<button type="button" data-z="${z}" class="${pendingSize===z?'active':''}">${z}</button>`).join('');$('sizeRow').querySelectorAll('button').forEach(b=>b.onclick=()=>{pendingSize=+b.dataset.z;renderFontControls()})}
+function renderFontControls(){let n=node(selectedId);if(!n)return;pendingFont=n.fontFamily||FONTS[0][1];pendingSize=n.fontSize||defaultFontSize(n.id);$('fontGrid').innerHTML=FONTS.map(([a,f])=>`<button type="button" data-f="${f}" class="${pendingFont===f?'active':''}">${a}</button>`).join('');$('fontGrid').querySelectorAll('button').forEach(b=>b.addEventListener('pointerup',e=>{e.preventDefault();pendingFont=b.dataset.f;n.fontFamily=pendingFont;save();render();renderFontControls()}));$('sizeRow').innerHTML=[12,14,16,18,20,22,24,28].map(z=>`<button type="button" data-z="${z}" class="${pendingSize===z?'active':''}">${z}</button>`).join('');$('sizeRow').querySelectorAll('button').forEach(b=>b.addEventListener('pointerup',e=>{e.preventDefault();pendingSize=+b.dataset.z;n.fontSize=pendingSize;save();render();renderFontControls()}))}
 $('fontBtn').onclick=()=>{renderFontControls();openSheet('fontSheet')};$('fontSave').onclick=()=>{let n=node(selectedId);if(!n)return;let targets=[n];if($('fontDesc').checked)targets.push(...descendants(n.id));targets.forEach((x,i)=>{x.fontFamily=pendingFont;x.fontSize=i===0?pendingSize:Math.max(12,pendingSize-depthOf(x.id)*2+depthOf(n.id)*2)});save();render();closeSheets()};
+
+// 플로팅 도구창 드래그: 버튼이 아닌 여백에서 이동. iPad/마우스 공통.
+(()=>{const tb=$('toolbar');let moving=false,sx=0,sy=0,sl=0,st=0;
+tb.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;moving=true;toolbarManual=true;sx=e.clientX;sy=e.clientY;sl=parseFloat(tb.style.left)||ws.clientWidth/2;st=parseFloat(tb.style.top)||90;tb.classList.add('dragging');try{tb.setPointerCapture(e.pointerId)}catch(_){}});
+tb.addEventListener('pointermove',e=>{if(!moving)return;e.preventDefault();let tw=tb.offsetWidth,th=tb.offsetHeight,x=sl+(e.clientX-sx),y=st+(e.clientY-sy);x=Math.max(tw/2+8,Math.min(ws.clientWidth-tw/2-8,x));y=Math.max(8,Math.min(ws.clientHeight-th-8,y));tb.style.left=x+'px';tb.style.top=y+'px'});
+const end=e=>{moving=false;tb.classList.remove('dragging');try{tb.releasePointerCapture(e.pointerId)}catch(_){}};tb.addEventListener('pointerup',end);tb.addEventListener('pointercancel',end)})();
 const emojiData=['😀','😃','😄','😁','😆','😅','😂','🤣','😊','😇','🙂','🙃','😉','😌','😍','🥰','😘','😗','😙','😚','😋','😛','😝','😜','🤪','🤨','🧐','🤓','😎','🥸','🤩','🥳','😏','😒','😞','😔','😟','😕','🙁','☹️','😣','😖','😫','😩','🥺','😢','😭','😤','😠','😡','🤬','🤯','😳','🥵','🥶','😱','😨','😰','😥','😓','🤗','🤔','🫣','🤭','🫢','🫡','🤫','🫠','🤥','😶','😐','😑','😬','🙄','😯','😦','😧','😮','😲','🥱','😴','🤤','😪','😵','🤐','🥴','🤢','🤮','🤧','😷','🤒','🤕','🤑','🤠','😈','👿','👻','💀','☠️','👽','🤖','💩','😺','😸','😹','😻','😼','😽','🙀','😿','😾','🙈','🙉','🙊','💋','💌','💘','💝','💖','💗','💓','💞','💕','💟','❣️','❤️','🧡','💛','💚','💙','💜','🤎','🖤','🤍','💔','❤️\u200d🔥','❤️\u200d🩹','💯','💢','💥','💫','💦','💨','🕳️','💬','👁️\u200d🗨️','🗨️','🗯️','💭','💤','👋','🤚','🖐️','✋','🖖','🫱','🫲','🫳','🫴','👌','🤌','🤏','✌️','🤞','🫰','🤟','🤘','🤙','👈','👉','👆','👇','☝️','👍','👎','✊','👊','🤛','🤜','👏','🙌','🫶','👐','🤲','🤝','🙏','✍️','💅','🤳','💪','🦾','🦿','🦵','🦶','👂','👃','🧠','🫀','🫁','🦷','🦴','👀','👁️','👅','👄','🧑','👶','🧒','👧','👦','👩','🧔','👵','👴','🙍','🙎','🙅','🙆','💁','🙋','🧏','🙇','🤦','🤷','👮','👷','💂','🕵️','👩\u200d⚕️','👩\u200d🌾','👩\u200d🍳','👩\u200d🎓','👩\u200d🎤','👩\u200d🏫','👩\u200d💻','👩\u200d💼','👩\u200d🔧','👩\u200d🔬','👩\u200d🎨','👩\u200d🚒','👩\u200d✈️','👩\u200d🚀','👩\u200d⚖️','🦸','🦹','🧙','🧚','🧛','🧜','🧝','🧞','🧟','💆','💇','🚶','🧍','🧎','🏃','💃','🕺','👯','🧖','🧗','🤺','🏇','⛷️','🏂','🏌️','🏄','🚣','🏊','⛹️','🏋️','🚴','🤸','🤼','🤽','🤾','🤹','🧘','🛀','🛌','👭','👫','👬','💏','💑','👪','🗣️','👤','👥','🫂','👣','🐵','🐒','🦍','🦧','🐶','🐕','🦮','🐩','🐺','🦊','🦝','🐱','🐈','🦁','🐯','🐅','🐆','🐴','🫎','🫏','🐎','🦄','🦓','🦌','🦬','🐮','🐂','🐃','🐄','🐷','🐖','🐗','🐽','🐏','🐑','🐐','🐪','🐫','🦙','🦒','🐘','🦣','🦏','🦛','🐭','🐁','🐀','🐹','🐰','🐇','🐿️','🦫','🦔','🦇','🐻','🐨','🐼','🦥','🦦','🦨','🦘','🦡','🐾','🦃','🐔','🐓','🐣','🐤','🐥','🐦','🐧','🕊️','🦅','🦆','🦢','🦉','🦤','🪶','🦩','🦚','🦜','🪽','🐦\u200d⬛','🪿','🐸','🐊','🐢','🦎','🐍','🐲','🐉','🦕','🦖','🐳','🐋','🐬','🦭','🐟','🐠','🐡','🦈','🐙','🐚','🪸','🪼','🐌','🦋','🐛','🐜','🐝','🪲','🐞','🦗','🪳','🕷️','🦂','🦟','🪰','🪱','🦠','💐','🌸','💮','🪷','🌹','🥀','🌺','🌻','🌼','🌷','🪻','🌱','🪴','🌲','🌳','🌴','🌵','🌾','🌿','☘️','🍀','🍁','🍂','🍃','🪹','🪺','🍄','🌰','🦀','🦞','🦐','🦑','🌍','🌎','🌏','🌐','🗺️','🗾','🧭','🏔️','⛰️','🌋','🗻','🏕️','🏖️','🏜️','🏝️','🏞️','🏟️','🏛️','🏗️','🧱','🪨','🪵','🛖','🏘️','🏠','🏡','🏢','🏥','🏦','🏨','🏪','🏫','🏬','🏭','🏯','🏰','💒','🗼','🗽','⛪','🕌','🛕','🕍','⛩️','🕋','⛲','⛺','🌁','🌃','🏙️','🌄','🌅','🌆','🌇','🌉','♨️','🎠','🛝','🎡','🎢','💈','🎪','🚂','🚃','🚄','🚅','🚆','🚇','🚈','🚉','🚊','🚝','🚞','🚋','🚌','🚍','🚎','🚐','🚑','🚒','🚓','🚕','🚗','🚙','🛻','🚚','🚛','🚜','🏎️','🏍️','🛵','🚲','🛴','🛹','🛼','🚏','🛣️','🛤️','🛢️','⛽','🛞','🚨','🚥','🚦','🛑','🚧','⚓','🛟','⛵','🛶','🚤','🛳️','⛴️','🛥️','🚢','✈️','🛩️','🛫','🛬','🪂','💺','🚁','🚟','🚠','🚡','🛰️','🚀','🛸','🛎️','🧳','⌛','⏳','⌚','⏰','⏱️','⏲️','🕰️','🌑','🌒','🌓','🌔','🌕','🌖','🌗','🌘','🌙','🌚','🌛','🌜','🌡️','☀️','🌝','🌞','🪐','⭐','🌟','🌠','🌌','☁️','⛅','⛈️','🌤️','🌥️','🌦️','🌧️','🌨️','🌩️','🌪️','🌫️','🌬️','🌈','☂️','☔','⚡','❄️','☃️','⛄','☄️','🔥','💧','🌊','🎃','🎄','🎆','🎇','🧨','✨','🎈','🎉','🎊','🎋','🎍','🎎','🎏','🎐','🎑','🧧','🎀','🎁','🎟️','🎫','🎖️','🏆','🏅','🥇','🥈','🥉','⚽','⚾','🥎','🏀','🏐','🏈','🏉','🎾','🥏','🎳','🏏','🏑','🏒','🥍','🏓','🏸','🥊','🥋','🥅','⛳','⛸️','🎣','🤿','🎽','🎿','🛷','🥌','🎯','🪀','🪁','🔫','🎱','🔮','🪄','🎮','🕹️','🎰','🎲','🧩','🧸','🪅','🪩','🪆','♠️','♥️','♦️','♣️','♟️','🃏','🀄','🎴','🎭','🖼️','🎨','🧵','🪡','🧶','🪢','👓','🕶️','🥽','🥼','🦺','👔','👕','👖','🧣','🧤','🧥','🧦','👗','👘','🥻','🩱','🩲','🩳','👙','👚','🪭','👛','👜','👝','🛍️','🎒','🩴','👞','👟','🥾','🥿','👠','👡','🩰','👢','🪮','👑','👒','🎩','🎓','🧢','🪖','⛑️','📿','💄','💍','💎','🔇','🔈','🔉','🔊','📢','📣','📯','🔔','🔕','🎼','🎵','🎶','🎙️','🎚️','🎛️','🎤','🎧','📻','🎷','🪗','🎸','🎹','🎺','🎻','🪕','🥁','🪘','📱','📲','☎️','📞','📟','📠','🔋','🪫','🔌','💻','🖥️','🖨️','⌨️','🖱️','🖲️','💽','💾','💿','📀','🧮','🎥','🎞️','📽️','🎬','📺','📷','📸','📹','📼','🔍','🔎','🕯️','💡','🔦','🏮','🪔','📔','📕','📖','📗','📘','📙','📚','📓','📒','📃','📜','📄','📰','🗞️','📑','🔖','🏷️','💰','🪙','💴','💵','💶','💷','💸','💳','🧾','💹','✉️','📧','📨','📩','📤','📥','📦','📫','📪','📬','📭','📮','🗳️','✏️','✒️','🖋️','🖊️','🖌️','🖍️','📝','💼','📁','📂','🗂️','📅','📆','🗒️','🗓️','📇','📈','📉','📊','📋','📌','📍','📎','🖇️','📏','📐','✂️','🗃️','🗄️','🗑️','🔒','🔓','🔏','🔐','🔑','🗝️','🔨','🪓','⛏️','⚒️','🛠️','🗡️','⚔️','🧲','🪜','⚙️','🧰','🪛','🔧','🔩','⚖️','🔗','⛓️','🪝','🧪','🧫','🧬','🔬','🔭','📡','💊','🩹','🩼','🩺','🚪','🪑','🚽','🚿','🛁','🪥','🪒','🧴','🧷','🧹','🧺','🧻','🪣','🧼','🫧','🪥','🧽','🧯','🛒','🚬','⚰️','🪦','⚱️','🧿','🪬','🗿','🪧','🪪'];
 let emojiPage=1;const EMOJI_PAGE_SIZE=35;
 function chooseEmoji(e){node(selectedId).emoji=e;recents.emojis=[e,...recents.emojis.filter(x=>x!==e)].slice(0,14);saveRecents();save();render();closeSheets()}
@@ -265,9 +275,9 @@ $('importBtn').onclick=()=>$('backupInput').click();
 $('backupInput').onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{data=JSON.parse(r.result);showCredits=data.showCredits!==false;selectedId=data.nodes[0]?.id||'root';save();render();center()}catch(err){alert('백업 파일을 읽을 수 없어요.')}};r.readAsText(f)};
 render();
 
-// v2.1: register the versioned service worker so GitHub Pages refreshes cached app files.
+// v2.2: register the versioned service worker so GitHub Pages refreshes cached app files.
 if('serviceWorker' in navigator){
- window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=2.1').then(r=>r.update()).catch(()=>{}));
+ window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=2.2').then(r=>r.update()).catch(()=>{}));
 }
 </script>
 </body></html>
